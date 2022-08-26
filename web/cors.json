@@ -1,0 +1,7 @@
+[
+  {
+    "origin": ["https://tva1.sinaimg.cn"],
+    "method": ["GET"],
+    "maxAgeSeconds": 3600
+  }
+]
