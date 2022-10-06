@@ -2,14 +2,18 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_net_captcha/flutter_net_captcha.dart';
 import 'package:get/get.dart';
-import 'package:pearmeta_fapp/utils/alert.dart';
-import 'package:pearmeta_fapp/utils/toast.dart';
-import 'package:pearmeta_fapp/views/login.dart';
-import 'package:pearmeta_fapp/utils/yindun_captcha.dart';
+import 'package:h2verse_app/providers/user_provider.dart';
+import 'package:h2verse_app/services/user_service.dart';
+import 'package:h2verse_app/utils/toast.dart';
+import 'package:h2verse_app/views/home_wrapper.dart';
+import 'package:h2verse_app/views/login.dart';
+import 'package:h2verse_app/utils/yindun_captcha.dart';
+import 'package:h2verse_app/views/my_webview.dart';
+import 'package:h2verse_app/widgets/cached_image.dart';
 
-import 'package:pearmeta_fapp/widgets/counter_down_text_button.dart';
-import 'package:pearmeta_fapp/widgets/login_input.dart';
-import 'package:pearmeta_fapp/services/art.service.dart';
+import 'package:h2verse_app/widgets/counter_down_text_button.dart';
+import 'package:h2verse_app/widgets/login_input.dart';
+import 'package:provider/provider.dart';
 
 class Signup extends StatefulWidget {
   const Signup({Key? key}) : super(key: key);
@@ -31,21 +35,56 @@ class _SignupState extends State<Signup> {
   void onSendSms() {
     String phone = _phoneController.text;
     if (phone.isEmpty) {
-      Alert.fail('请先输入手机号');
+      Toast.show('请先输入手机号');
     } else {
       YidunCaptcha.show((object) {
         VerifyCodeResponse resp = object;
         if (resp.result == true) {
           String code = resp.validate as String;
-          artService.sendSms(phone, code).then((value) {
-            Toast.show('发送验证码成功');
-            setState(() {
-              duration = 3;
-            });
+          UserService.sendSms(phone, code).then((value) {
+            if (value != null) {
+              Toast.show(value == 0 ? '发送验证码成功' : '请稍后发送');
+              setState(() {
+                duration = value > 0 ? value : 60;
+              });
+            }
           });
         }
       }, (object) => null);
     }
+  }
+
+  void onSignup() {
+    String phone = _phoneController.text;
+    String password = _passwordController.text;
+    String code = _captchaController.text;
+    if (code.isEmpty) {
+      Toast.show('请输入验证码');
+      return;
+    }
+    if (password.isEmpty) {
+      Toast.show('请输入登录密码');
+      return;
+    }
+    if (!isChecked) {
+      Toast.show('请勾选同意《用户协议》与《隐私政策》');
+      return;
+    }
+    UserService.singup(phone: phone, password: password, code: code)
+        .then((value) {
+      if (value != null) {
+        Provider.of<UserProvider>(context, listen: false).user = value;
+        Get.offAllNamed(HomeWrapper.routeName);
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _phoneController.dispose();
+    _passwordController.dispose();
+    _captchaController.dispose();
+    super.dispose();
   }
 
   @override
@@ -53,21 +92,18 @@ class _SignupState extends State<Signup> {
     return Scaffold(
       backgroundColor: Colors.white,
       extendBodyBehindAppBar: true,
-      // resizeToAvoidBottomInset: false,
-      appBar: AppBar(
-        backgroundColor: Colors.transparent,
-      ),
+      resizeToAvoidBottomInset: false,
       body: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Stack(
             children: [
-              Image.asset('lib/assets/img_placeholder.jpg'),
+              Image.asset('lib/assets/materials.webp'),
+              // Image.asset('lib/assets/nenad-novakovic.webp'),
               // const Positioned(
               //   top: 100,
               //   left: 30,
               //   child: Text(
-              //     '梨数字',
+              //     '氢宇宙',
               //     style: TextStyle(color: Colors.white, fontSize: 28),
               //   ),
               // ),
@@ -89,10 +125,10 @@ class _SignupState extends State<Signup> {
             ],
           ),
           Expanded(
-              child: SingleChildScrollView(
+              child: Padding(
             padding: const EdgeInsets.all(20),
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
               children: [
                 const Text(
                   '注册',
@@ -134,15 +170,17 @@ class _SignupState extends State<Signup> {
                   obscure: obscure,
                   controller: _passwordController,
                   suffix: IconButton(
-                      onPressed: () {
-                        setState(() {
-                          obscure = !obscure;
-                        });
-                      },
-                      padding: const EdgeInsets.all(0),
-                      icon: Icon(obscure
-                          ? CupertinoIcons.eye
-                          : CupertinoIcons.eye_slash)),
+                    onPressed: () {
+                      setState(() {
+                        obscure = !obscure;
+                      });
+                    },
+                    padding: const EdgeInsets.all(0),
+                    icon: Icon(obscure
+                        ? CupertinoIcons.eye
+                        : CupertinoIcons.eye_slash),
+                    iconSize: 18,
+                  ),
                 ),
                 const SizedBox(
                   height: 20,
@@ -154,10 +192,11 @@ class _SignupState extends State<Signup> {
                           shape: const StadiumBorder(),
                           padding: const EdgeInsets.symmetric(vertical: 12),
                           textStyle: const TextStyle(fontSize: 16),
-                          onPrimary: Colors.white),
-                      onPressed: () => debugPrint('111'),
+                          foregroundColor: Colors.white),
+                      onPressed: onSignup,
                       child: const Text('注 册')),
                 ),
+                const Spacer(),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
@@ -176,18 +215,25 @@ class _SignupState extends State<Signup> {
                     TextButton(
                         style: TextButton.styleFrom(
                             padding: const EdgeInsets.all(0)),
-                        onPressed: () => debugPrint('111'),
+                        onPressed: () {
+                          Get.toNamed(MyWebview.routeName, arguments: {
+                            'title': '用户协议',
+                            'url': 'https://h2verse.art/agreement/user'
+                          });
+                        },
                         child: const Text('《用户协议》')),
                     const Text('与'),
                     TextButton(
                         style: TextButton.styleFrom(
                             padding: const EdgeInsets.all(0)),
-                        onPressed: () => debugPrint('111'),
+                        onPressed: () {
+                          Get.toNamed(MyWebview.routeName, arguments: {
+                            'title': '隐私协议',
+                            'url': 'https://h2verse.art/agreement/privacy'
+                          });
+                        },
                         child: const Text('《隐私政策》')),
                   ],
-                ),
-                const SizedBox(
-                  height: 20,
                 ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,

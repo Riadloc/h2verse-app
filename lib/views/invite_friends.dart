@@ -5,10 +5,12 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:get/get.dart';
+import 'package:h2verse_app/providers/user_provider.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:pearmeta_fapp/utils/toast.dart';
-import 'package:pearmeta_fapp/views/invite_records.dart';
+import 'package:h2verse_app/utils/toast.dart';
+import 'package:h2verse_app/views/invite_records.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:provider/provider.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 import 'package:share_plus/share_plus.dart';
 
@@ -23,6 +25,7 @@ class InviteFriends extends StatefulWidget {
 
 class _InviteFriendsState extends State<InviteFriends> {
   GlobalKey repainKey = GlobalKey();
+  String inviteCode = '';
 
   Future<void> onShare() async {
     var status = await Permission.storage.status;
@@ -39,7 +42,7 @@ class _InviteFriendsState extends State<InviteFriends> {
           await image.toByteData(format: ImageByteFormat.png);
       Directory tempDir = await getTemporaryDirectory();
       String tempPath = tempDir.path;
-      final dir = Directory('$tempPath/梨数字海报.png');
+      final dir = Directory('$tempPath/氢宇宙海报.png');
       final imageFile = File(dir.path);
       await imageFile.writeAsBytes(finalByteData!.buffer.asUint8List());
       Share.shareFiles([imageFile.path]);
@@ -51,14 +54,21 @@ class _InviteFriendsState extends State<InviteFriends> {
   }
 
   void onCopy() {
-    Clipboard.setData(const ClipboardData(text: '1234'));
+    Clipboard.setData(
+        ClipboardData(text: 'https://h2verse.art/index?code=$inviteCode'));
     Toast.show('复制成功！');
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    var user = Provider.of<UserProvider>(context, listen: false).user;
+    inviteCode = '${user.userId}';
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        backgroundColor: Colors.white,
         appBar: AppBar(
           elevation: 0,
           backgroundColor: Colors.white,
@@ -85,23 +95,48 @@ class _InviteFriendsState extends State<InviteFriends> {
                 children: [
                   RepaintBoundary(
                     key: repainKey,
-                    child: Stack(
+                    child: Column(
                       children: [
                         Image.asset(
-                          'lib/assets/poster.jpg',
+                          'lib/assets/poster.webp',
                           fit: BoxFit.fitWidth,
                         ),
-                        Positioned(
-                          bottom: 44,
-                          right: 40,
-                          child: QrImage(
-                            data: "1234567890",
-                            version: QrVersions.auto,
-                            size: 66.0,
-                            backgroundColor: Colors.white,
-                            padding: const EdgeInsets.all(4),
-                          ),
-                        )
+                        Container(
+                            color: const Color.fromRGBO(51, 51, 73, 1),
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 20, vertical: 12),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Column(
+                                  mainAxisSize: MainAxisSize.min,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: const [
+                                    Text(
+                                      '氢宇宙',
+                                      style: TextStyle(
+                                          color: Colors.white,
+                                          fontSize: 18,
+                                          fontWeight: FontWeight.w500),
+                                    ),
+                                    SizedBox(
+                                      height: 8,
+                                    ),
+                                    Text('不一样的 WEB3.0',
+                                        style: TextStyle(
+                                          color: Colors.white,
+                                        ))
+                                  ],
+                                ),
+                                QrImage(
+                                  data: inviteCode,
+                                  version: QrVersions.auto,
+                                  size: 66.0,
+                                  backgroundColor: Colors.white,
+                                  padding: const EdgeInsets.all(4),
+                                )
+                              ],
+                            )),
                       ],
                     ),
                   ),
@@ -109,7 +144,6 @@ class _InviteFriendsState extends State<InviteFriends> {
                   //   height: 16,
                   // ),
                   Ink(
-                    color: const Color.fromRGBO(60, 60, 65, 1),
                     padding: const EdgeInsets.symmetric(vertical: 20),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -133,7 +167,6 @@ class _InviteFriendsState extends State<InviteFriends> {
                             ),
                             const Text(
                               '复制链接',
-                              style: TextStyle(color: Colors.white),
                             )
                           ],
                         ),
@@ -156,7 +189,6 @@ class _InviteFriendsState extends State<InviteFriends> {
                             ),
                             const Text(
                               '分享',
-                              style: TextStyle(color: Colors.white),
                             )
                           ],
                         )

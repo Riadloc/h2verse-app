@@ -1,6 +1,6 @@
 {
-    "name": "pearmeta_fapp",
-    "short_name": "pearmeta_fapp",
+    "name": "h2verse",
+    "short_name": "h2verse",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",

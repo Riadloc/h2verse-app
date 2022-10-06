@@ -1,23 +1,33 @@
 import 'dart:io';
 
 import 'package:easy_refresh/easy_refresh.dart';
-import 'package:easy_refresh_skating/easy_refresh_skating.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:pearmeta_fapp/constants/routes.dart';
-import 'package:pearmeta_fapp/constants/theme.dart';
-import 'package:pearmeta_fapp/views/art_detail.dart';
-import 'package:pearmeta_fapp/views/home_wrapper.dart';
-import 'package:pearmeta_fapp/utils/yindun_captcha.dart';
-// ignore: unused_import
-import 'package:pearmeta_fapp/utils/http.dart';
+import 'package:h2verse_app/models/user_model.dart';
+import 'package:h2verse_app/services/common_service.dart';
+import 'package:h2verse_app/utils/helper.dart';
+import 'package:hive_flutter/hive_flutter.dart';
+import 'package:h2verse_app/constants/constants.dart';
+import 'package:h2verse_app/constants/routes.dart';
+import 'package:h2verse_app/constants/theme.dart';
+import 'package:h2verse_app/providers/user_provider.dart';
+import 'package:h2verse_app/views/home_wrapper.dart';
+import 'package:h2verse_app/utils/yindun_captcha.dart';
+import 'package:h2verse_app/utils/http.dart';
+import 'package:mobpush_plugin/mobpush_plugin.dart';
+import 'package:provider/provider.dart';
+import 'package:sentry_flutter/sentry_flutter.dart';
 
-void main() {
-  runApp(const MyApp());
-
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  if (!kIsWeb) {
+    await Hive.initFlutter();
+    await Hive.openBox(LocalDB.BOX);
+  }
   if (Platform.isAndroid) {
     SystemUiOverlayStyle style = const SystemUiOverlayStyle(
         statusBarColor: Colors.transparent,
@@ -28,19 +38,67 @@ void main() {
   YidunCaptcha.init();
   HttpUtils();
   // 全局设置
-  EasyRefresh.defaultHeaderBuilder = () => const SkatingHeader();
-  EasyRefresh.defaultFooterBuilder = () => const ClassicFooter(
-      infiniteOffset: 0, dragText: '获取中...', processedText: '完成');
+  EasyRefresh.defaultHeaderBuilder = () => const ClassicHeader(
+        dragText: '下拉刷新',
+        armedText: '释放开始',
+        readyText: '刷新中',
+        processingText: '刷新中',
+        processedText: '成功啦',
+        noMoreText: '没有更多',
+        failedText: '失败了',
+        messageText: '最后更新于 %T',
+      );
+  EasyRefresh.defaultFooterBuilder = () => const MaterialFooter();
+
+  await SentryFlutter.init(
+    (options) {
+      options.dsn =
+          'https://0a21ec2254474408a48dfdb7e7c6a86d@o4503920768385024.ingest.sentry.io/4503920775528448';
+      // Set tracesSampleRate to 1.0 to capture 100% of transactions for performance monitoring.
+      // We recommend adjusting this value in production.
+      options.tracesSampleRate = 1.0;
+    },
+    appRunner: () => runApp(MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (context) => UserProvider()),
+      ],
+      child: const MyApp(),
+    )),
+  );
 }
 
-class MyApp extends StatelessWidget {
-  const MyApp({Key? key}) : super(key: key);
+class MyApp extends StatefulWidget {
+  const MyApp({super.key});
 
-  // This widget is the root of your application.
+  @override
+  State<MyApp> createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+  @override
+  void initState() {
+    super.initState();
+    //上传隐私协议许可
+    MobpushPlugin.updatePrivacyPermissionStatus(true).then((value) {
+      if (kDebugMode) {
+        print(">>>>>>>>>>updatePrivacyPermissionStatus:$value");
+      }
+    });
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) async {
+      checkUpgrade();
+      var homeInfo = await CommonService.getAppHomeInitialInfo();
+      if (homeInfo != null && homeInfo?['userInfo'] != null) {
+        // ignore: use_build_context_synchronously
+        Provider.of<UserProvider>(context, listen: false).user =
+            User.fromJson(homeInfo['userInfo']);
+      }
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return GetMaterialApp(
-      title: 'Flutter Demo',
+      title: '氢宇宙',
       debugShowCheckedModeBanner: false,
       theme: theme,
       initialRoute: HomeWrapper.routeName,

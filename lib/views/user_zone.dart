@@ -1,20 +1,23 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:pearmeta_fapp/constants/theme.dart';
-import 'package:pearmeta_fapp/services/art.service.dart';
+import 'package:h2verse_app/constants/theme.dart';
 
-import 'package:pearmeta_fapp/models/user.model.dart';
-import 'package:pearmeta_fapp/views/identity.dart';
-import 'package:pearmeta_fapp/views/invite_friends.dart';
-import 'package:pearmeta_fapp/views/orders.dart';
-import 'package:pearmeta_fapp/views/setting.dart';
-import 'package:pearmeta_fapp/views/user_arts.dart';
-import 'package:pearmeta_fapp/views/wallet.dart';
-import 'package:pearmeta_fapp/widgets/split_line.dart';
-import 'package:pearmeta_fapp/widgets/tap_tile.dart';
+import 'package:h2verse_app/models/user_model.dart';
+import 'package:h2verse_app/providers/user_provider.dart';
+import 'package:h2verse_app/services/user_service.dart';
+import 'package:h2verse_app/views/airdrop/airdrop_list.dart';
+import 'package:h2verse_app/views/identity.dart';
+import 'package:h2verse_app/views/invite_friends.dart';
+import 'package:h2verse_app/views/order/orders.dart';
+import 'package:h2verse_app/views/setting.dart';
+import 'package:h2verse_app/widgets/copy_field.dart';
+import 'package:h2verse_app/widgets/split_line.dart';
+import 'package:h2verse_app/widgets/tap_tile.dart';
+import 'package:provider/provider.dart';
 
 class UserZone extends StatefulWidget {
-  const UserZone({Key? key}) : super(key: key);
+  const UserZone({Key? key, required this.changeTab}) : super(key: key);
+  final void Function(int index) changeTab;
 
   @override
   State<UserZone> createState() => _UserZoneState();
@@ -28,10 +31,11 @@ class _UserZoneState extends State<UserZone>
   User user = User.empty();
 
   void getUserInfo() {
-    artService.getUserInfo().then((value) {
+    UserService.getUserInfo().then((value) {
       setState(() {
         user = value;
       });
+      Provider.of<UserProvider>(context, listen: false).user = value;
     });
   }
 
@@ -44,18 +48,17 @@ class _UserZoneState extends State<UserZone>
   @override
   Widget build(BuildContext context) {
     super.build(context);
-    return Container(
-      // color: Colors.white,
-      // padding: const EdgeInsets.all(20),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+    return MediaQuery.removePadding(
+      context: context,
+      removeTop: true,
+      child: ListView(
         children: [
           Stack(
             clipBehavior: Clip.none,
             children: [
               Image.asset(
-                'lib/assets/milad-fakurian.webp',
-                height: 200,
+                'lib/assets/milad-fakurian.jpg',
+                height: 140,
                 width: double.infinity,
                 fit: BoxFit.cover,
               ),
@@ -70,11 +73,11 @@ class _UserZoneState extends State<UserZone>
                       style: ElevatedButton.styleFrom(
                         minimumSize: const Size(40, 40),
                         elevation: 0,
-                        primary: const Color.fromRGBO(248, 248, 249, 1),
+                        backgroundColor: const Color.fromRGBO(248, 248, 249, 1),
                         shape: const CircleBorder(),
                         padding: const EdgeInsets.all(0),
                       ),
-                      child: const Icon(Icons.settings_outlined)),
+                      child: const Icon(Icons.settings)),
                 ),
               ),
               Positioned(
@@ -93,13 +96,11 @@ class _UserZoneState extends State<UserZone>
                                       color: Colors.white, width: 8))),
                           child: Container(
                               decoration: const ShapeDecoration(
-                                color: Color.fromRGBO(171, 199, 180, 1),
                                 shape: CircleBorder(),
                               ),
                               child: ClipRRect(
                                 borderRadius: BorderRadius.circular(80),
-                                child: Image.asset(
-                                    'lib/assets/default_avatar.png',
+                                child: Image.asset('lib/assets/avatar1.jpg',
                                     width: 80),
                               )))
                     ],
@@ -114,12 +115,41 @@ class _UserZoneState extends State<UserZone>
             alignment: Alignment.center,
             padding: const EdgeInsets.only(top: 8),
             child: Column(children: [
-              const Text(
-                '王泽',
-                style: TextStyle(fontWeight: FontWeight.w700, fontSize: 24),
-              ),
-              Text('UID: 10080',
-                  style: TextStyle(fontSize: 13, color: Colors.grey.shade800)),
+              Consumer<UserProvider>(
+                  builder: (context, user, child) => Column(
+                        children: [
+                          Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Text(
+                                user.user.nickname,
+                                style: const TextStyle(
+                                    fontWeight: FontWeight.w700, fontSize: 24),
+                              ),
+                              Consumer<UserProvider>(
+                                builder: (context, value, child) {
+                                  var user = value.user;
+                                  if (user.certified == 0) {
+                                    return Container();
+                                  }
+                                  return const Padding(
+                                    padding: EdgeInsets.only(left: 4),
+                                    child: Icon(
+                                      Icons.verified,
+                                      color: Colors.blue,
+                                    ),
+                                  );
+                                },
+                              )
+                            ],
+                          ),
+                          CopyField(
+                            text: 'UID: ${user.user.userId}',
+                            copyText: '${user.user.userId}',
+                            color: Colors.grey.shade800,
+                          )
+                        ],
+                      )),
             ]),
           ),
           const SizedBox(
@@ -128,48 +158,52 @@ class _UserZoneState extends State<UserZone>
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 20),
             child: Container(
-              clipBehavior: Clip.hardEdge,
-              decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(10),
-                  boxShadow: kCardBoxShadow),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                children: [
-                  StaticsColumn(
-                    title: '我的订单',
-                    value: '888',
-                    onTap: () {
-                      Get.toNamed(Orders.routeName);
-                    },
-                  ),
-                  const SplitLine(),
-                  StaticsColumn(
-                    title: '我的藏品',
-                    value: '666',
-                    onTap: () {
-                      Get.toNamed(UserArts.routeName);
-                    },
-                  ),
-                  const SplitLine(),
-                  StaticsColumn(
-                    title: '我的余额',
-                    value: '999',
-                    onTap: () {
-                      Get.toNamed(Wallet.routeName);
-                    },
-                  ),
-                  const SplitLine(),
-                  StaticsColumn(
-                    title: '我的交易',
-                    value: '888',
-                    onTap: () {
-                      //
-                    },
-                  ),
-                ],
-              ),
-            ),
+                clipBehavior: Clip.hardEdge,
+                decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(10),
+                    boxShadow: kCardBoxShadow),
+                child: Consumer<UserProvider>(
+                  builder: (context, value, child) {
+                    var stats = value.user.stats;
+                    return Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      children: [
+                        StaticsColumn(
+                          title: '我的订单',
+                          value: stats.order,
+                          onTap: () {
+                            Get.toNamed(Orders.routeName);
+                          },
+                        ),
+                        const SplitLine(),
+                        StaticsColumn(
+                          title: '我的藏品',
+                          value: stats.art,
+                          onTap: () {
+                            widget.changeTab(2);
+                          },
+                        ),
+                        const SplitLine(),
+                        StaticsColumn(
+                          title: '我的余额',
+                          value: stats.balance,
+                          onTap: () {
+                            // Get.toNamed(Wallet.routeName);
+                          },
+                        ),
+                        // const SplitLine(),
+                        // StaticsColumn(
+                        //   title: '我的交易',
+                        //   value: stats.trade,
+                        //   onTap: () {
+                        //     //
+                        //   },
+                        // ),
+                      ],
+                    );
+                  },
+                )),
           ),
           const SizedBox(
             height: 20,
@@ -194,29 +228,73 @@ class _UserZoneState extends State<UserZone>
                   ),
                   const Divider(
                     indent: 10,
-                    endIndent: 20,
+                    endIndent: 10,
                     height: 1,
                   ),
                   TapTile(
-                    icon: Icons.support_agent_outlined,
-                    title: '帮助中心',
+                    icon: Icons.airplane_ticket_outlined,
+                    title: '空投奖励',
                     onTap: () {
-                      //
+                      Get.toNamed(AirdropList.routeName);
                     },
                   ),
                   const Divider(
                     indent: 10,
-                    endIndent: 20,
+                    endIndent: 10,
                     height: 1,
                   ),
-                  TapTile(
-                    icon: Icons.verified_outlined,
-                    title: '前去实名认证',
-                    color: Colors.orangeAccent,
-                    onTap: () {
-                      Get.toNamed(Identity.routeName);
+                  // TapTile(
+                  //   icon: Icons.group_outlined,
+                  //   title: '官方社群',
+                  //   onTap: () {
+                  //     Get.toNamed(CommunityGroups.routeName);
+                  //   },
+                  // ),
+                  // const Divider(
+                  //   indent: 10,
+                  //   endIndent: 20,
+                  //   height: 1,
+                  // ),
+                  // TapTile(
+                  //   icon: Icons.question_answer_outlined,
+                  //   title: '常见问题',
+                  //   onTap: () {
+                  //     //
+                  //   },
+                  // ),
+                  // const Divider(
+                  //   indent: 10,
+                  //   endIndent: 20,
+                  //   height: 1,
+                  // ),
+                  // TapTile(
+                  //   icon: Icons.support_agent_outlined,
+                  //   title: '联系客服',
+                  //   onTap: () {
+                  //     Get.toNamed(CustomerService.routeName);
+                  //   },
+                  // ),
+                  // const Divider(
+                  //   indent: 10,
+                  //   endIndent: 20,
+                  //   height: 1,
+                  // ),
+                  Consumer<UserProvider>(
+                    builder: (context, value, child) {
+                      var user = value.user;
+                      if (user.certified == 0) {
+                        return TapTile(
+                          icon: Icons.verified_outlined,
+                          title: '前去实名认证',
+                          color: Colors.orangeAccent,
+                          onTap: () {
+                            Get.toNamed(Identity.routeName);
+                          },
+                        );
+                      }
+                      return Container();
                     },
-                  ),
+                  )
                 ],
               ),
             ),
@@ -227,51 +305,12 @@ class _UserZoneState extends State<UserZone>
   }
 }
 
-class ZoneSmallCard extends StatelessWidget {
-  const ZoneSmallCard(
-      {Key? key, required this.title, required this.value, required this.onTap})
-      : super(key: key);
-  final String title;
-  final String value;
-  final dynamic Function() onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    return Card(
-      color: const Color.fromRGBO(248, 248, 249, 1),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
-      margin: EdgeInsets.zero,
-      elevation: 0,
-      child: InkWell(
-        onTap: () => null,
-        borderRadius: BorderRadius.circular(24),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text(
-              title,
-              style: const TextStyle(color: Color.fromRGBO(142, 142, 147, 1)),
-            ),
-            const SizedBox(
-              height: 6,
-            ),
-            Text(
-              value,
-              style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 18),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
 class StaticsColumn extends StatelessWidget {
   const StaticsColumn(
       {Key? key, required this.title, required this.value, required this.onTap})
       : super(key: key);
   final String title;
-  final String value;
+  final num value;
   final dynamic Function() onTap;
 
   @override
@@ -288,7 +327,7 @@ class StaticsColumn extends StatelessWidget {
               height: 16,
             ),
             Text(
-              value,
+              '$value',
               style: const TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
             ),
             const SizedBox(

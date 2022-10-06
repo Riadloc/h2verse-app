@@ -48,11 +48,15 @@ MaterialColor createMaterialColor(Color color) {
 const Color xPrimaryColor = Color(0xFF3491FA);
 
 final ThemeData theme = ThemeData(
+    backgroundColor: const Color.fromARGB(255, 247, 247, 247),
     primarySwatch: Colors.lightBlue,
     inputDecorationTheme: InputDecorationTheme(
       border: kInputBorder,
       focusedBorder: kInputFocusdBorder,
       enabledBorder: kInputBorder,
+    ),
+    appBarTheme: const AppBarTheme(
+      shadowColor: Colors.black54,
     ),
     cardTheme: const CardTheme(
       elevation: 0,

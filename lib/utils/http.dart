@@ -3,12 +3,14 @@ import 'dart:io';
 
 import 'package:cookie_jar/cookie_jar.dart';
 import 'package:dio/dio.dart';
+import 'package:dio_cache_interceptor_hive_store/dio_cache_interceptor_hive_store.dart';
 import 'package:dio_cookie_manager/dio_cookie_manager.dart';
-import 'package:flutter_easyloading/flutter_easyloading.dart';
+import 'package:dio_cache_interceptor/dio_cache_interceptor.dart';
+import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:pearmeta_fapp/utils/alert.dart';
-import 'package:pearmeta_fapp/views/login.dart';
+import 'package:h2verse_app/utils/alert.dart';
+import 'package:h2verse_app/views/login.dart';
 
 class HttpUtils {
   late final Dio dio;
@@ -16,27 +18,16 @@ class HttpUtils {
   HttpUtils._internal() {
     dio = Dio(BaseOptions(
       // baseUrl: 'http://192.168.31.210:3000/api',
-      baseUrl: 'http://192.168.2.230:3000/api',
+      // baseUrl: 'http://192.168.2.230:3000/api',
+      baseUrl: kReleaseMode
+          ? 'https://h2verse.art/api'
+          : 'http://192.168.2.230:3000/api',
       connectTimeout: 5000,
       validateStatus: (status) => status! >= 200 && status < 500,
     ));
     addCookieJar(dio);
     dio.interceptors.add(InterceptorsWrapper(
       onRequest: (options, handler) {
-        var data = options.data;
-        var query = options.queryParameters;
-        dynamic showIndicator =
-            data?['showIndicator'] ?? query['showIndicator'];
-        print(showIndicator);
-        if (showIndicator != false) {
-          EasyLoading.show(status: 'loading');
-          if (data != null) {
-            options.data.remove('showIndicator');
-          }
-          if (query.isNotEmpty) {
-            options.queryParameters.remove('showIndicator');
-          }
-        }
         if (options.method == 'POST') {
           //
         }
@@ -65,15 +56,22 @@ class HttpUtils {
           //
         }
         options.data['data'] = data;
-        EasyLoading.dismiss();
         return handler.next(options);
       },
       onError: (options, handler) {
         Alert.reqFail('请联系管理员');
-        EasyLoading.dismiss();
         return handler.next(options);
       },
     ));
+    dio.interceptors.add(DioCacheInterceptor(
+        options: CacheOptions(
+      store: HiveCacheStore(null),
+      policy: CachePolicy.request,
+      hitCacheOnErrorExcept: [401, 403],
+      priority: CachePriority.normal,
+      keyBuilder: CacheOptions.defaultCacheKeyBuilder,
+      allowPostMethod: false,
+    )));
   }
 
   factory HttpUtils() => _instance;

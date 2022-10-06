@@ -1,4 +1,4 @@
-package com.example.pearmeta_fapp
+package com.h2verse.app
 
 import io.flutter.embedding.android.FlutterFragmentActivity
 

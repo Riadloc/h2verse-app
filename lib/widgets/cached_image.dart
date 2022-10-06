@@ -28,8 +28,11 @@ class CachedImage extends StatelessWidget {
     return CachedNetworkImage(
       imageUrl: url,
       imageBuilder: imageBuilder,
-      progressIndicatorBuilder: (context, url, downloadProgress) =>
-          CircularProgressIndicator(value: downloadProgress.progress),
+      progressIndicatorBuilder: (context, url, downloadProgress) => Container(
+        color: Colors.black26,
+        width: width,
+        height: height,
+      ),
       errorWidget: (context, url, error) => const Icon(Icons.error),
     );
   }

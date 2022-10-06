@@ -1,9 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:pearmeta_fapp/constants/enum.dart';
-import 'package:pearmeta_fapp/constants/theme.dart';
+import 'package:get/get.dart';
+import 'package:h2verse_app/constants/enum.dart';
+import 'package:h2verse_app/constants/theme.dart';
 
 class FilterSheet extends StatefulWidget {
-  const FilterSheet({Key? key}) : super(key: key);
+  const FilterSheet(
+      {Key? key, required this.onApply, required this.onReset, this.sortKey})
+      : super(key: key);
+  final void Function(Map<String, int> values) onApply;
+  final void Function() onReset;
+  final int? sortKey;
 
   @override
   State<FilterSheet> createState() => _FilterSheetState();
@@ -26,9 +32,17 @@ class _FilterSheetState extends State<FilterSheet> {
   }
 
   @override
+  void initState() {
+    super.initState();
+    if (widget.sortKey != null) {
+      sortKey = FilterItemKeysEnum.values[widget.sortKey!];
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Container(
-      height: 280,
+      height: 200,
       color: Colors.white,
       padding: const EdgeInsets.all(24),
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
@@ -50,14 +64,14 @@ class _FilterSheetState extends State<FilterSheet> {
                   },
                 ),
                 FilterChip(
-                  title: '价格降序',
+                  title: '价格升序',
                   selected: sortKey == FilterItemKeysEnum.SORT_LOW_PRICE,
                   onSelected: (bool selected) {
                     onSelectFilterItem(FilterItemKeysEnum.SORT_LOW_PRICE);
                   },
                 ),
                 FilterChip(
-                  title: '价格升序',
+                  title: '价格降序',
                   selected: sortKey == FilterItemKeysEnum.SORT_HIGH_PRICE,
                   onSelected: (bool selected) {
                     onSelectFilterItem(FilterItemKeysEnum.SORT_HIGH_PRICE);
@@ -67,37 +81,37 @@ class _FilterSheetState extends State<FilterSheet> {
             )
           ],
         ),
-        const SizedBox(
-          height: 12,
-        ),
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Text(
-              '系列',
-              style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
-            ),
-            Wrap(
-              spacing: 8,
-              children: [
-                FilterChip(
-                  title: '创世之星',
-                  selected: serialId == 'cs',
-                  onSelected: (bool selected) {
-                    onSelectSerialItem('cs');
-                  },
-                ),
-                FilterChip(
-                  title: '山海经',
-                  selected: serialId == 'shj',
-                  onSelected: (bool selected) {
-                    onSelectSerialItem('shj');
-                  },
-                ),
-              ],
-            )
-          ],
-        ),
+        // const SizedBox(
+        //   height: 12,
+        // ),
+        // Column(
+        //   crossAxisAlignment: CrossAxisAlignment.start,
+        //   children: [
+        //     const Text(
+        //       '系列',
+        //       style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+        //     ),
+        //     Wrap(
+        //       spacing: 8,
+        //       children: [
+        //         FilterChip(
+        //           title: '创世之星',
+        //           selected: serialId == 'cs',
+        //           onSelected: (bool selected) {
+        //             onSelectSerialItem('cs');
+        //           },
+        //         ),
+        //         FilterChip(
+        //           title: '山海经',
+        //           selected: serialId == 'shj',
+        //           onSelected: (bool selected) {
+        //             onSelectSerialItem('shj');
+        //           },
+        //         ),
+        //       ],
+        //     )
+        //   ],
+        // ),
         const Spacer(),
         Row(
           children: [
@@ -111,7 +125,8 @@ class _FilterSheetState extends State<FilterSheet> {
                       ),
                     ),
                     onPressed: () {
-                      //
+                      widget.onReset();
+                      Get.back(closeOverlays: false, canPop: false);
                     },
                     child: const Text('重 置'))),
             const SizedBox(
@@ -121,11 +136,14 @@ class _FilterSheetState extends State<FilterSheet> {
                 child: ElevatedButton(
                     style: ElevatedButton.styleFrom(
                       elevation: 0,
-                      onPrimary: Colors.white,
+                      foregroundColor: Colors.white,
                       minimumSize: const Size.fromHeight(44),
                     ),
                     onPressed: () {
-                      //
+                      widget.onApply({
+                        'sortKey': sortKey.index,
+                      });
+                      Get.back(closeOverlays: false, canPop: false);
                     },
                     child: const Text('应 用')))
           ],

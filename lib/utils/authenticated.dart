@@ -5,8 +5,8 @@ import 'package:local_auth/local_auth.dart';
 import 'package:local_auth_android/local_auth_android.dart';
 import 'package:local_auth_ios/local_auth_ios.dart';
 import 'package:local_auth/error_codes.dart' as auth_error;
-import 'package:pearmeta_fapp/utils/alert.dart';
-import 'package:pearmeta_fapp/utils/toast.dart';
+import 'package:h2verse_app/utils/alert.dart';
+import 'package:h2verse_app/utils/toast.dart';
 
 class Authenticated {
   static Future<bool> auth() async {

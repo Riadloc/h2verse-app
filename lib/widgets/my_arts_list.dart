@@ -3,10 +3,12 @@ import 'dart:ui';
 import 'package:easy_refresh/easy_refresh.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:pearmeta_fapp/models/art.model.dart';
-import 'package:pearmeta_fapp/services/art.service.dart';
-import 'package:pearmeta_fapp/widgets/empty_placeholder.dart';
-import 'package:pearmeta_fapp/widgets/my_arts_sheet.dart';
+import 'package:h2verse_app/constants/theme.dart';
+import 'package:h2verse_app/models/art_model.dart';
+import 'package:h2verse_app/services/art_service.dart';
+import 'package:h2verse_app/widgets/empty_placeholder.dart';
+import 'package:h2verse_app/widgets/market_skeleton.dart';
+import 'package:h2verse_app/widgets/my_arts_sheet.dart';
 
 class MyArtsList extends StatefulWidget {
   const MyArtsList({Key? key, required this.type}) : super(key: key);
@@ -22,15 +24,18 @@ class _MyArtsListState extends State<MyArtsList>
   bool get wantKeepAlive => true;
 
   int pageNo = 1;
-  final int pageSize = 12;
   bool noMore = false;
   List<dynamic> artList = [];
+  final int pageSize = 12;
+  final double padding = 12.0;
+
+  bool get initLoading => pageNo == 1 && !noMore && artList.isEmpty;
 
   void getList() {
     if (!noMore) {
-      artService.getMyArts(pageNo: pageNo, type: widget.type).then((value) => {
+      ArtService.getMyArts(pageNo: pageNo, type: widget.type).then((value) => {
             setState(() {
-              List<Art> data = value.list;
+              List<Art> data = value;
               artList.addAll(data);
               if (data.length < pageSize) {
                 noMore = true;
@@ -51,39 +56,48 @@ class _MyArtsListState extends State<MyArtsList>
   @override
   Widget build(BuildContext context) {
     super.build(context);
-    double itemWidth = (MediaQuery.of(context).size.width - 60) / 2;
+    if (initLoading) {
+      return MarketSkeleton(padding: padding);
+    }
+    if (artList.isEmpty) {
+      return const Center(
+        child: EmptyPlaceholder(),
+      );
+    }
+    double itemWidth = (MediaQuery.of(context).size.width - padding * 3) / 2;
+    double childAspectRatio = itemWidth / (itemWidth + 50);
     return EasyRefresh(
-      onRefresh: () async {
-        setState(() {
-          pageNo = 1;
-          noMore = false;
-          artList.clear();
+        onRefresh: () async {
+          setState(() {
+            pageNo = 1;
+            noMore = false;
+            artList.clear();
+            getList();
+          });
+        },
+        onLoad: () async {
           getList();
-        });
-      },
-      onLoad: () async {
-        getList();
-      },
-      child: ListView(
-        padding: const EdgeInsets.fromLTRB(20, 20, 20, 0),
-        children: [
-          artList.isNotEmpty
-              ? Wrap(
-                  spacing: 10,
-                  runSpacing: 10,
-                  children: artList
-                      .map(
-                        (e) => MyArtSmallCard(
-                          artData: e,
-                          vw: itemWidth,
-                        ),
-                      )
-                      .toList(),
-                )
-              : const EmptyPlaceholder(),
-        ],
-      ),
-    );
+        },
+        child: artList.isNotEmpty
+            ? GridView.builder(
+                padding: EdgeInsets.all(padding),
+                shrinkWrap: true,
+                itemCount: artList.length,
+                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 2,
+                    mainAxisSpacing: padding,
+                    crossAxisSpacing: padding,
+                    childAspectRatio: childAspectRatio),
+                itemBuilder: (context, index) {
+                  return MyArtSmallCard(
+                    artData: artList[index],
+                    vw: itemWidth,
+                  );
+                },
+              )
+            : ListView(
+                children: const [EmptyPlaceholder()],
+              ));
   }
 }
 
@@ -96,15 +110,12 @@ class MyArtSmallCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
+    return Ink(
       width: vw,
+      decoration:
+          const BoxDecoration(color: Colors.white, boxShadow: kCardBoxShadow),
       child: Card(
           elevation: 0,
-          shape: const RoundedRectangleBorder(
-            side: BorderSide(
-              color: Colors.transparent,
-            ),
-          ),
           child: InkWell(
             onTap: () => {
               Get.bottomSheet(
@@ -138,7 +149,8 @@ class MyArtSmallCard extends StatelessWidget {
                   artData.name,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
-                  style: const TextStyle(fontSize: 14, height: 1.5),
+                  style: const TextStyle(
+                      fontSize: 14, fontWeight: FontWeight.w500, height: 1.5),
                 ),
               )
             ]),
