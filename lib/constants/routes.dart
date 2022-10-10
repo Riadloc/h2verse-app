@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:h2verse_app/views/about.dart';
+import 'package:h2verse_app/views/acount/trade_password_form.dart';
 import 'package:h2verse_app/views/airdrop/airdrop_detail.dart';
 import 'package:h2verse_app/views/airdrop/airdrop_list.dart';
 import 'package:h2verse_app/views/community/customer_service.dart';
@@ -51,6 +52,7 @@ Map<String, Widget Function(BuildContext)> routes = {
   Wallet.routeName: (context) => const Wallet(),
   UserEdit.routeName: (context) => const UserEdit(),
   AccountManage.routeName: (context) => const AccountManage(),
+  TradePasswordForm.routeName: (context) => const TradePasswordForm(),
   UserChangePassword.routeName: (context) => const UserChangePassword(),
   IdentityDetail.routeName: (context) => const IdentityDetail(),
   TopupStore.routeName: (context) => const TopupStore(),

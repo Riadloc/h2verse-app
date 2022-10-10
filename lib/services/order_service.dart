@@ -5,7 +5,7 @@ import 'package:h2verse_app/models/order_model.dart';
 import 'package:h2verse_app/models/order_result_model.dart';
 import 'package:h2verse_app/utils/alert.dart';
 import 'package:h2verse_app/utils/http.dart';
-import 'package:h2verse_app/views/acount/account_manage.dart';
+import 'package:h2verse_app/views/acount/trade_password_form.dart';
 import 'package:h2verse_app/views/identity.dart';
 import 'package:h2verse_app/views/wallet/topup_store.dart';
 import 'package:h2verse_app/widgets/modal.dart';
@@ -73,12 +73,12 @@ class OrderService {
     } else if (code == CustomHttpCode.UNSETPAYKEY) {
       Getx.Get.dialog(
         Modal(
-          title: '支付密码',
-          description: '未设置支付密码',
+          title: '交易密码',
+          description: '未设置交易密码',
           confirmText: '前去设置',
           onConfirm: () {
             Getx.Get.back(canPop: false);
-            Getx.Get.toNamed(AccountManage.routeName);
+            Getx.Get.toNamed(TradePasswordForm.routeName);
           },
           onCancel: () {
             Getx.Get.back(canPop: true);

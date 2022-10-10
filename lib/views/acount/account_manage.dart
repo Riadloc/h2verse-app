@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:h2verse_app/constants/theme.dart';
 import 'package:h2verse_app/utils/authenticated.dart';
 import 'package:h2verse_app/views/acount/bankcard_list.dart';
+import 'package:h2verse_app/views/acount/trade_password_form.dart';
 import 'package:h2verse_app/views/user/user_address.dart';
 
 class AccountManage extends StatelessWidget {
@@ -38,14 +39,14 @@ class AccountManage extends StatelessWidget {
                 Get.toNamed(BankCardManage.routeName);
               },
             ),
-            // AccountCard(
-            //   icon: 'lib/assets/lock-front-gradient.webp',
-            //   width: itemWidth,
-            //   title: '交易密码',
-            //   onTap: () async {
-            //     bool valid = await Authenticated.auth();
-            //   },
-            // ),
+            AccountCard(
+              icon: 'lib/assets/lock-front-gradient.webp',
+              width: itemWidth,
+              title: '交易密码',
+              onTap: () async {
+                Get.toNamed(TradePasswordForm.routeName);
+              },
+            ),
             // AccountCard(
             //   icon: 'lib/assets/lock-front-gradient.webp',
             //   width: itemWidth,

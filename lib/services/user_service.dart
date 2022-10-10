@@ -81,7 +81,7 @@ class UserService {
       NormalResp data = response.data['data'];
       return User.fromJson(data);
     }
-    Alert.reqFail(response.data['msg']);
+    // Alert.reqFail(response.data['msg']);
     return User.empty();
   }
 
@@ -202,6 +202,20 @@ class UserService {
     Response response;
     response = await HttpUtils().dio.post('/user/address', data: data);
     EasyLoading.dismiss();
+    if (response.data['code'] == 0) {
+      return true;
+    }
+    Alert.reqFail(response.data['msg']);
+    return false;
+  }
+
+  static Future savePayKey({
+    required String payKey,
+    required String password,
+  }) async {
+    var data = {'payKey': payKey, 'password': password};
+    Response response;
+    response = await HttpUtils().dio.post('/user/paysafety/set', data: data);
     if (response.data['code'] == 0) {
       return true;
     }

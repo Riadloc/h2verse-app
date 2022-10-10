@@ -54,12 +54,14 @@ class WalletService {
       {required String realName,
       required String idNo,
       required String bankNo,
-      required String phone}) async {
+      required String phone,
+      required String bankCode}) async {
     var data = {
       'realName': realName,
       'idNo': idNo,
       'bankNo': bankNo,
       'phone': phone,
+      'bankCode': bankCode,
     };
     Response response =
         await HttpUtils().dio.post('/wallet/bank/bind', data: data);

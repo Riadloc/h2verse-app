@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:h2verse_app/constants/constants.dart';
+import 'package:h2verse_app/constants/theme.dart';
 import 'package:h2verse_app/models/art_model.dart';
 import 'package:h2verse_app/models/box_result_model.dart';
 import 'package:h2verse_app/providers/user_provider.dart';
 import 'package:h2verse_app/services/art_service.dart';
 import 'package:h2verse_app/utils/helper.dart';
 import 'package:h2verse_app/utils/toast.dart';
-import 'package:h2verse_app/views/detail/art_put_on_form.dart';
 import 'package:h2verse_app/views/identity.dart';
 
 import 'package:h2verse_app/constants/enum.dart';
@@ -21,8 +21,10 @@ import 'package:h2verse_app/widgets/loading_sceen.dart';
 import 'package:h2verse_app/widgets/modal.dart';
 import 'package:h2verse_app/widgets/split_line.dart';
 import 'package:h2verse_app/widgets/tap_tile.dart';
+import 'package:intl/intl.dart';
 import 'package:lottie/lottie.dart';
 import 'package:provider/provider.dart';
+import 'package:timer_count_down/timer_count_down.dart';
 
 class ArtDetail extends StatefulWidget {
   const ArtDetail({Key? key}) : super(key: key);
@@ -47,18 +49,50 @@ class _ArtDetailState extends State<ArtDetail> {
     String btnText = '';
     List<Color>? colors;
     int _status = status != -1 ? status : data.operatorStatus!;
+    int duration = 0;
 
     switch (_status) {
       case GoodOperatorStatus.WAIT:
         {
-          // onPressed = () => Toast.show('购买还没开始');
-          btnText = '还未开始';
-          break;
-        }
-      case GoodOperatorStatus.AHEAD:
-        {
-          btnText = '还未开始';
-          break;
+          int time = data.nodes!.firstWhere((element) => element.id == 2).time;
+          duration = DateTime.fromMillisecondsSinceEpoch(time)
+              .difference(DateTime.now())
+              .inSeconds;
+          var countdown = Countdown(
+            seconds: duration,
+            build: (BuildContext context, double time) => Text(
+              textAlign: TextAlign.center,
+              DateFormat('HH时mm分ss秒').format(
+                  DateTime.fromMillisecondsSinceEpoch((time * 1000).toInt(),
+                      isUtc: true)),
+              style: const TextStyle(fontSize: 16),
+            ),
+            interval: const Duration(seconds: 1),
+            onFinished: () {
+              duration = 0;
+            },
+          );
+          return Container(
+            padding: const EdgeInsets.symmetric(vertical: 13, horizontal: 18),
+            decoration: BoxDecoration(
+                color: Colors.grey.shade300,
+                borderRadius: BorderRadius.circular(8),
+                boxShadow: kCardBoxShadow),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const Icon(
+                  Icons.add_shopping_cart,
+                  size: 16,
+                ),
+                const SizedBox(
+                  width: 4,
+                ),
+                countdown
+              ],
+            ),
+          );
         }
       case GoodOperatorStatus.WAIT_SUBSCRIBE:
         {
@@ -220,6 +254,7 @@ class _ArtDetailState extends State<ArtDetail> {
     ];
     List<ArtNode> steps = data.nodes ?? [];
     if (steps.isEmpty) return Container();
+    if (data.showNodes == 0) return Container();
     Widget arrowForward = const Padding(
       padding: EdgeInsets.symmetric(horizontal: 12),
       child: Icon(
@@ -376,7 +411,8 @@ class _ArtDetailState extends State<ArtDetail> {
                       buildTopStepper(detailData),
                       Container(
                         padding: const EdgeInsets.all(20),
-                        color: Colors.white,
+                        decoration: const BoxDecoration(
+                            color: Colors.white, boxShadow: kCardBoxShadow),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
@@ -428,8 +464,10 @@ class _ArtDetailState extends State<ArtDetail> {
                       detailData.pictures!.isNotEmpty
                           ? Container(
                               padding: const EdgeInsets.all(20),
-                              margin: const EdgeInsets.only(top: 20),
-                              color: Colors.white,
+                              margin: const EdgeInsets.only(top: 12),
+                              decoration: const BoxDecoration(
+                                  color: Colors.white,
+                                  boxShadow: kCardBoxShadow),
                               child: Column(
                                 mainAxisSize: MainAxisSize.min,
                                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -470,7 +508,8 @@ class _ArtDetailState extends State<ArtDetail> {
                       ),
                       Container(
                         padding: const EdgeInsets.all(20),
-                        color: Colors.white,
+                        decoration: const BoxDecoration(
+                            color: Colors.white, boxShadow: kCardBoxShadow),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [

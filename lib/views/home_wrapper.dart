@@ -16,15 +16,18 @@ class HomeWrapper extends StatefulWidget {
 
 class _HomeWrapperState extends State<HomeWrapper> {
   int _selectedIndex = 0;
+  final pageController = PageController();
 
   void _onItemTapped(int index) {
     setState(() {
+      pageController.jumpToPage(index);
       _selectedIndex = index;
     });
   }
 
   @override
   void dispose() {
+    pageController.dispose();
     super.dispose();
   }
 
@@ -37,7 +40,11 @@ class _HomeWrapperState extends State<HomeWrapper> {
       UserZone(changeTab: _onItemTapped),
     ];
     return Scaffold(
-      body: AnimatedIndexedStack(index: _selectedIndex, children: routes),
+      body: PageView(
+        controller: pageController,
+        physics: const NeverScrollableScrollPhysics(),
+        children: routes,
+      ),
       bottomNavigationBar: BottomNavigationBar(
           elevation: 0,
           type: BottomNavigationBarType.fixed,

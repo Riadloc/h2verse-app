@@ -27,6 +27,7 @@ class _BankCardBindFormState extends State<BankCardBindForm> {
   @override
   void initState() {
     super.initState();
+    getInfo();
   }
 
   @override
@@ -40,6 +41,7 @@ class _BankCardBindFormState extends State<BankCardBindForm> {
 
   void getInfo() async {
     RealUserInfo realUserInfo = await UserService.getUserCertifiedInfo();
+    print(realUserInfo.realName);
     if (realUserInfo.realName.isNotEmpty) {
       nameController.text = realUserInfo.realName;
       idNoController.text = realUserInfo.idNo;
@@ -63,8 +65,27 @@ class _BankCardBindFormState extends State<BankCardBindForm> {
     String idNo = idNoController.text;
     String bankNo = bankNoController.text;
     String phone = phoneNoController.text;
+    var bankInfo = await getBankInfo(bankNo);
+    if (!bankInfo['validated']) {
+      Toast.show('错误或不支持的卡号');
+      setState(() {
+        loading = false;
+      });
+      return;
+    }
+    if (bankInfo['cardType'] != 'DC') {
+      Toast.show('只支持储蓄银行卡');
+      setState(() {
+        loading = false;
+      });
+      return;
+    }
     bool res = await WalletService.postAddBank(
-        realName: realName, idNo: idNo, bankNo: bankNo, phone: phone);
+        realName: realName,
+        idNo: idNo,
+        bankNo: bankNo,
+        phone: phone,
+        bankCode: bankInfo['bank']);
     setState(() {
       loading = false;
     });
@@ -72,6 +93,11 @@ class _BankCardBindFormState extends State<BankCardBindForm> {
       Toast.show('绑定成功！');
       Get.back();
     }
+  }
+
+  Future getBankInfo(String bankNo) async {
+    var res = await WalletService.getBankInfo(bankNo);
+    return res;
   }
 
   @override
@@ -91,6 +117,7 @@ class _BankCardBindFormState extends State<BankCardBindForm> {
               mainAxisSize: MainAxisSize.min,
               children: [
                 TextFormField(
+                  controller: bankNoController,
                   decoration: const InputDecoration(
                       hintText: '请输入银行卡卡号',
                       border: InputBorder.none,
@@ -108,6 +135,7 @@ class _BankCardBindFormState extends State<BankCardBindForm> {
                 ),
                 const Divider(),
                 TextFormField(
+                  controller: nameController,
                   readOnly: true,
                   decoration: const InputDecoration(
                       hintText: '请选择开户人姓名',
@@ -120,6 +148,7 @@ class _BankCardBindFormState extends State<BankCardBindForm> {
                 ),
                 const Divider(),
                 TextFormField(
+                  controller: phoneNoController,
                   decoration: const InputDecoration(
                       hintText: '请输入开户预留手机号',
                       border: InputBorder.none,
@@ -131,6 +160,7 @@ class _BankCardBindFormState extends State<BankCardBindForm> {
                 ),
                 const Divider(),
                 TextFormField(
+                  controller: idNoController,
                   readOnly: true,
                   decoration: const InputDecoration(
                       hintText: '请输入开户人身份证号',

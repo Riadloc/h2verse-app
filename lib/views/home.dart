@@ -52,13 +52,16 @@ class _HomeState extends State<Home> with AutomaticKeepAliveClientMixin {
   void getList() {
     if (!noMore && mounted) {
       ArtService.getArts(pageNo).then((value) => {
-            setState(() {
-              List<Art> data = value;
-              artList.addAll(data);
-              if (data.length < pageSize || pageNo == 1) {
-                noMore = true;
+            if (mounted)
+              {
+                setState(() {
+                  List<Art> data = value;
+                  artList.addAll(data);
+                  if (data.length < pageSize || pageNo == 1) {
+                    noMore = true;
+                  }
+                }),
               }
-            }),
           });
     }
   }

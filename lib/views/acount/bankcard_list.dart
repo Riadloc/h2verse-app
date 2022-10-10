@@ -31,11 +31,6 @@ class _BankCardManageState extends State<BankCardManage> {
     });
   }
 
-  Future<void> getBankInfo(String bankNo) async {
-    var res = await WalletService.getBankInfo(bankNo);
-    return res;
-  }
-
   @override
   void initState() {
     super.initState();
@@ -59,7 +54,8 @@ class _BankCardManageState extends State<BankCardManage> {
         actions: [
           TextButton(
               onPressed: () {
-                Get.toNamed(BankCardBindForm.routeName);
+                Get.toNamed(BankCardBindForm.routeName)
+                    ?.then((value) => getBankList());
               },
               child: const Text(
                 '绑定银行卡',
