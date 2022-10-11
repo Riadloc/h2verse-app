@@ -5,8 +5,9 @@ import 'package:h2verse_app/widgets/modal.dart';
 import 'package:h2verse_app/widgets/pin_code_form.dart';
 
 class OptModal extends StatefulWidget {
-  const OptModal({super.key, this.onPress});
+  const OptModal({super.key, this.onPress, this.title = '输入您的交易密码'});
   final Future<void> Function(String pin)? onPress;
+  final String title;
 
   @override
   State<OptModal> createState() => _OptModalState();
@@ -26,9 +27,10 @@ class _OptModalState extends State<OptModal> {
             Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                const Text(
-                  '输入您的支付密码',
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                Text(
+                  widget.title,
+                  style: const TextStyle(
+                      fontSize: 18, fontWeight: FontWeight.bold),
                 ),
                 const SizedBox(
                   height: 16,

@@ -72,6 +72,7 @@ class _OrderFormState extends State<OrderForm> {
         Toast.show('已发送验证码至您的手机');
         Get.bottomSheet(
           OptModal(
+            title: '输入您收到的验证码',
             onPress: (pin) async {
               bool isSuccess = await OrderService.doTrade(
                   orderId: res.orderId,
