@@ -245,4 +245,17 @@ class ArtService {
     Alert.reqFail(response.data['msg']);
     return false;
   }
+
+  static Future postGift(
+      {required String goodId,
+      required String receiver,
+      required String payKey}) async {
+    var data = {'goodId': goodId, 'receiver': receiver, 'payKey': payKey};
+    Response response = await HttpUtils().dio.post('/goods/giftto', data: data);
+    if (response.data['code'] == 0) {
+      return true;
+    }
+    Alert.reqFail(response.data['msg']);
+    return false;
+  }
 }

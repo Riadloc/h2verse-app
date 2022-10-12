@@ -38,7 +38,6 @@ class _MyArtsSheetState extends State<MyArtsSheet> {
   }
 
   void goDetail(ArtSns ele) {
-    print(ele.id);
     Get.toNamed(ArtDetail.routeName, arguments: {
       'goodId': ele.id,
       'artType': ArtType.second,

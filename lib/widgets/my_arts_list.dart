@@ -6,6 +6,8 @@ import 'package:get/get.dart';
 import 'package:h2verse_app/constants/theme.dart';
 import 'package:h2verse_app/models/art_model.dart';
 import 'package:h2verse_app/services/art_service.dart';
+import 'package:h2verse_app/utils/event_bus.dart';
+import 'package:h2verse_app/utils/events.dart';
 import 'package:h2verse_app/widgets/empty_placeholder.dart';
 import 'package:h2verse_app/widgets/market_skeleton.dart';
 import 'package:h2verse_app/widgets/my_arts_sheet.dart';
@@ -47,10 +49,22 @@ class _MyArtsListState extends State<MyArtsList>
     }
   }
 
+  void refresh() {
+    setState(() {
+      pageNo = 1;
+      noMore = false;
+      artList.clear();
+      getList();
+    });
+  }
+
   @override
   void initState() {
     super.initState();
     getList();
+    eventBus.on<RefreshEvent>().listen((event) {
+      refresh();
+    });
   }
 
   @override
@@ -67,17 +81,8 @@ class _MyArtsListState extends State<MyArtsList>
     double itemWidth = (MediaQuery.of(context).size.width - padding * 3) / 2;
     double childAspectRatio = itemWidth / (itemWidth + 50);
     return EasyRefresh(
-        onRefresh: () async {
-          setState(() {
-            pageNo = 1;
-            noMore = false;
-            artList.clear();
-            getList();
-          });
-        },
-        onLoad: () async {
-          getList();
-        },
+        onRefresh: refresh,
+        onLoad: getList,
         child: artList.isNotEmpty
             ? GridView.builder(
                 padding: EdgeInsets.all(padding),

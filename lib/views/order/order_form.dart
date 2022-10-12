@@ -6,6 +6,8 @@ import 'package:h2verse_app/models/order_result_model.dart';
 import 'package:h2verse_app/providers/user_provider.dart';
 import 'package:h2verse_app/services/order_service.dart';
 import 'package:h2verse_app/services/wallet_service.dart';
+import 'package:h2verse_app/utils/event_bus.dart';
+import 'package:h2verse_app/utils/events.dart';
 import 'package:h2verse_app/utils/helper.dart';
 import 'package:h2verse_app/utils/toast.dart';
 import 'package:h2verse_app/widgets/cached_image.dart';
@@ -65,6 +67,7 @@ class _OrderFormState extends State<OrderForm> {
                 description: '购买成功，可以在【我的藏品】进行查看',
                 confirmText: '返回',
                 onConfirm: () {
+                  eventBus.fire(RefreshEvent());
                   Get.back(canPop: true, closeOverlays: true);
                 }))
           };

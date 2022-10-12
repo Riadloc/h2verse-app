@@ -8,6 +8,7 @@ import 'package:h2verse_app/providers/user_provider.dart';
 import 'package:h2verse_app/services/art_service.dart';
 import 'package:h2verse_app/utils/helper.dart';
 import 'package:h2verse_app/utils/toast.dart';
+import 'package:h2verse_app/views/detail/art_gift_transfer.dart';
 import 'package:h2verse_app/views/identity.dart';
 
 import 'package:h2verse_app/constants/enum.dart';
@@ -160,7 +161,8 @@ class _ArtDetailState extends State<ArtDetail> {
       case GoodOperatorStatus.CAN_TRANSFER:
         {
           onPressed = () => {
-                //
+                Get.toNamed(ArtGiftTransfer.routeName,
+                    arguments: {'goodId': data.id})
               };
           btnText = '转赠';
           break;

@@ -7,6 +7,7 @@ import 'package:h2verse_app/views/community/customer_service.dart';
 import 'package:h2verse_app/views/community/groups.dart';
 import 'package:h2verse_app/views/compose/compose_lab.dart';
 import 'package:h2verse_app/views/compose/compose_list.dart';
+import 'package:h2verse_app/views/detail/art_gift_transfer.dart';
 import 'package:h2verse_app/views/fuel/fule_list.dart';
 import 'package:h2verse_app/views/my_webview.dart';
 import 'package:h2verse_app/views/acount/account_manage.dart';
@@ -57,6 +58,7 @@ Map<String, Widget Function(BuildContext)> routes = {
   IdentityDetail.routeName: (context) => const IdentityDetail(),
   TopupStore.routeName: (context) => const TopupStore(),
   OrderForm.routeName: (context) => const OrderForm(),
+  ArtGiftTransfer.routeName: (context) => const ArtGiftTransfer(),
   OrderDetail.routeName: (context) => const OrderDetail(),
   InviteRecords.routeName: (context) => const InviteRecords(),
   MyWebview.routeName: (context) => const MyWebview(),
