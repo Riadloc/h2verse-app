@@ -49,22 +49,25 @@ class _NoticeBarState extends State<NoticeBar> {
           Get.toNamed(BulletinList.routeName);
         },
         child: Row(
+          mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             const Icon(Icons.notes_outlined),
             const SizedBox(
               width: 8,
             ),
-            bulletins.isNotEmpty
-                ? DefaultTextStyle(
-                    style: const TextStyle(fontSize: 15.0, color: Colors.black),
-                    child: AnimatedTextKit(animatedTexts: [
-                      for (int i = 0; i < bulletins.length; i++)
-                        buildRotateText(bulletins[i].title)
-                    ], pause: const Duration(seconds: 3), repeatForever: true),
-                  )
-                : Container(),
-            const Spacer(),
+            Expanded(
+                flex: 2,
+                child: bulletins.isNotEmpty
+                    ? DefaultTextStyle(
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        textAlign: TextAlign.left,
+                        style: const TextStyle(
+                            fontSize: 15.0, color: Colors.black),
+                        child: Text(bulletins[0].title),
+                      )
+                    : Container()),
             const Icon(
               Icons.arrow_forward,
               size: 18,

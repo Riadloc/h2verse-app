@@ -5,9 +5,11 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
+import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:h2verse_app/models/user_model.dart';
+import 'package:h2verse_app/providers/common_provider.dart';
 import 'package:h2verse_app/services/common_service.dart';
 import 'package:h2verse_app/utils/helper.dart';
 import 'package:hive_flutter/hive_flutter.dart';
@@ -23,11 +25,10 @@ import 'package:provider/provider.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 
 void main() async {
-  WidgetsFlutterBinding.ensureInitialized();
-  if (!kIsWeb) {
-    await Hive.initFlutter();
-    await Hive.openBox(LocalDB.BOX);
-  }
+  WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
+  FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
+  await Hive.initFlutter();
+  await Hive.openBox(LocalDB.BOX);
   if (Platform.isAndroid) {
     SystemUiOverlayStyle style = const SystemUiOverlayStyle(
         statusBarColor: Colors.transparent,
@@ -35,7 +36,9 @@ void main() async {
     SystemChrome.setSystemUIOverlayStyle(style);
   }
   GoogleFonts.config.allowRuntimeFetching = false;
-  YidunCaptcha.init();
+  if (!kIsWeb) {
+    YidunCaptcha.init();
+  }
   HttpUtils();
   // 全局设置
   EasyRefresh.defaultHeaderBuilder = () => const ClassicHeader(
@@ -61,6 +64,7 @@ void main() async {
     appRunner: () => runApp(MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (context) => UserProvider()),
+        ChangeNotifierProvider(create: (context) => CommonProvider()),
       ],
       child: const MyApp(),
     )),
@@ -91,7 +95,10 @@ class _MyAppState extends State<MyApp> {
         // ignore: use_build_context_synchronously
         Provider.of<UserProvider>(context, listen: false).user =
             User.fromJson(homeInfo['userInfo']);
+        Provider.of<CommonProvider>(context, listen: false)
+            .setApollo(homeInfo['apollo']);
       }
+      FlutterNativeSplash.remove();
     });
   }
 

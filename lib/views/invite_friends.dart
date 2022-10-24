@@ -55,7 +55,7 @@ class _InviteFriendsState extends State<InviteFriends> {
 
   void onCopy() {
     Clipboard.setData(
-        ClipboardData(text: 'https://h2verse.art/index?code=$inviteCode'));
+        ClipboardData(text: 'https://h5.h2verse.art/index?code=$inviteCode'));
     Toast.show('复制成功！');
   }
 

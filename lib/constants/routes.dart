@@ -28,6 +28,7 @@ import 'package:h2verse_app/views/search_screen.dart';
 import 'package:h2verse_app/views/setting.dart';
 import 'package:h2verse_app/views/signup.dart';
 import 'package:h2verse_app/views/user/user_destory.dart';
+import 'package:h2verse_app/views/user/user_show.dart';
 import 'package:h2verse_app/views/wallet/drawcash_form.dart';
 import 'package:h2verse_app/views/wallet/record_detail.dart';
 import 'package:h2verse_app/views/wallet/topup_form.dart';
@@ -79,4 +80,5 @@ Map<String, Widget Function(BuildContext)> routes = {
   CommunityGroups.routeName: (context) => const CommunityGroups(),
   CustomerService.routeName: (context) => const CustomerService(),
   About.routeName: (context) => const About(),
+  UserShow.routeName: (context) => const UserShow(),
 };

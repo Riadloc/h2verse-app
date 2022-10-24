@@ -4,22 +4,26 @@ import 'dart:convert';
 class OrderResult {
   final String orderId;
   final String orderNo;
-  final String token;
+  final String? token;
+  final String? url;
   OrderResult({
     required this.orderId,
     required this.orderNo,
-    required this.token,
+    this.token,
+    this.url,
   });
 
   OrderResult copyWith({
     String? orderId,
     String? orderNo,
     String? token,
+    String? url,
   }) {
     return OrderResult(
       orderId: orderId ?? this.orderId,
       orderNo: orderNo ?? this.orderNo,
       token: token ?? this.token,
+      url: url ?? this.url,
     );
   }
 
@@ -28,6 +32,7 @@ class OrderResult {
       'orderId': orderId,
       'orderNo': orderNo,
       'token': token,
+      'url': url,
     };
   }
 
@@ -35,7 +40,8 @@ class OrderResult {
     return OrderResult(
       orderId: map['orderId'] as String,
       orderNo: map['orderNo'] as String,
-      token: map['token'] as String,
+      token: map['token'] != null ? map['token'] as String : null,
+      url: map['url'] != null ? map['url'] as String : null,
     );
   }
 
@@ -45,8 +51,9 @@ class OrderResult {
       OrderResult.fromMap(json.decode(source) as Map<String, dynamic>);
 
   @override
-  String toString() =>
-      'OrderResult(orderId: $orderId, orderNo: $orderNo, token: $token)';
+  String toString() {
+    return 'OrderResult(orderId: $orderId, orderNo: $orderNo, token: $token, url: $url)';
+  }
 
   @override
   bool operator ==(covariant OrderResult other) {
@@ -54,9 +61,12 @@ class OrderResult {
 
     return other.orderId == orderId &&
         other.orderNo == orderNo &&
-        other.token == token;
+        other.token == token &&
+        other.url == url;
   }
 
   @override
-  int get hashCode => orderId.hashCode ^ orderNo.hashCode ^ token.hashCode;
+  int get hashCode {
+    return orderId.hashCode ^ orderNo.hashCode ^ token.hashCode ^ url.hashCode;
+  }
 }

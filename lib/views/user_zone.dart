@@ -10,6 +10,7 @@ import 'package:h2verse_app/views/identity.dart';
 import 'package:h2verse_app/views/invite_friends.dart';
 import 'package:h2verse_app/views/order/orders.dart';
 import 'package:h2verse_app/views/setting.dart';
+import 'package:h2verse_app/views/user/user_show.dart';
 import 'package:h2verse_app/widgets/copy_field.dart';
 import 'package:h2verse_app/widgets/split_line.dart';
 import 'package:h2verse_app/widgets/tap_tile.dart';
@@ -58,7 +59,7 @@ class _UserZoneState extends State<UserZone>
             children: [
               Image.asset(
                 'lib/assets/milad-fakurian.jpg',
-                height: 140,
+                height: 180,
                 width: double.infinity,
                 fit: BoxFit.cover,
               ),
@@ -93,7 +94,7 @@ class _UserZoneState extends State<UserZone>
                               // color: Colors.lightBlue,
                               shape: CircleBorder(
                                   side: BorderSide(
-                                      color: Colors.white, width: 8))),
+                                      color: Colors.white, width: 6))),
                           child: Container(
                               decoration: const ShapeDecoration(
                                 shape: CircleBorder(),
@@ -120,11 +121,12 @@ class _UserZoneState extends State<UserZone>
                         children: [
                           Row(
                             mainAxisSize: MainAxisSize.min,
+                            crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
                               Text(
                                 user.user.nickname,
                                 style: const TextStyle(
-                                    fontWeight: FontWeight.w700, fontSize: 24),
+                                    fontWeight: FontWeight.w500, fontSize: 22),
                               ),
                               Consumer<UserProvider>(
                                 builder: (context, value, child) {
@@ -133,10 +135,11 @@ class _UserZoneState extends State<UserZone>
                                     return Container();
                                   }
                                   return const Padding(
-                                    padding: EdgeInsets.only(left: 4),
+                                    padding: EdgeInsets.only(left: 4, top: 4),
                                     child: Icon(
                                       Icons.verified,
                                       color: Colors.blue,
+                                      size: 20,
                                     ),
                                   );
                                 },
@@ -189,7 +192,7 @@ class _UserZoneState extends State<UserZone>
                           title: '我的余额',
                           value: stats.balance,
                           onTap: () {
-                            // Get.toNamed(Wallet.routeName);
+                            //
                           },
                         ),
                         // const SplitLine(),
@@ -226,22 +229,12 @@ class _UserZoneState extends State<UserZone>
                       Get.toNamed(InviteFriends.routeName);
                     },
                   ),
-                  const Divider(
-                    indent: 10,
-                    endIndent: 10,
-                    height: 1,
-                  ),
                   TapTile(
                     icon: Icons.airplane_ticket_outlined,
                     title: '空投奖励',
                     onTap: () {
                       Get.toNamed(AirdropList.routeName);
                     },
-                  ),
-                  const Divider(
-                    indent: 10,
-                    endIndent: 10,
-                    height: 1,
                   ),
                   // TapTile(
                   //   icon: Icons.group_outlined,
@@ -250,11 +243,6 @@ class _UserZoneState extends State<UserZone>
                   //     Get.toNamed(CommunityGroups.routeName);
                   //   },
                   // ),
-                  // const Divider(
-                  //   indent: 10,
-                  //   endIndent: 20,
-                  //   height: 1,
-                  // ),
                   // TapTile(
                   //   icon: Icons.question_answer_outlined,
                   //   title: '常见问题',
@@ -262,22 +250,12 @@ class _UserZoneState extends State<UserZone>
                   //     //
                   //   },
                   // ),
-                  // const Divider(
-                  //   indent: 10,
-                  //   endIndent: 20,
-                  //   height: 1,
-                  // ),
                   // TapTile(
                   //   icon: Icons.support_agent_outlined,
                   //   title: '联系客服',
                   //   onTap: () {
                   //     Get.toNamed(CustomerService.routeName);
                   //   },
-                  // ),
-                  // const Divider(
-                  //   indent: 10,
-                  //   endIndent: 20,
-                  //   height: 1,
                   // ),
                   Consumer<UserProvider>(
                     builder: (context, value, child) {

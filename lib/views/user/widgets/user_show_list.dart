@@ -3,23 +3,24 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:h2verse_app/constants/enum.dart';
 import 'package:h2verse_app/constants/theme.dart';
+import 'package:h2verse_app/models/art_model.dart';
 import 'package:h2verse_app/models/market_item_model.dart';
 import 'package:h2verse_app/services/art_service.dart';
 import 'package:h2verse_app/views/detail/art_detail.dart';
 import 'package:h2verse_app/widgets/empty_placeholder.dart';
 import 'package:h2verse_app/widgets/market_skeleton.dart';
 
-class MarketList extends StatefulWidget {
-  const MarketList({Key? key, required this.type, this.query = ''})
+class UserShowList extends StatefulWidget {
+  const UserShowList({Key? key, required this.type, required this.uid})
       : super(key: key);
   final int type;
-  final String query;
+  final String uid;
 
   @override
-  State<MarketList> createState() => MarketListState();
+  State<UserShowList> createState() => UserShowListState();
 }
 
-class MarketListState extends State<MarketList>
+class UserShowListState extends State<UserShowList>
     with AutomaticKeepAliveClientMixin {
   @override
   bool get wantKeepAlive => true;
@@ -33,14 +34,10 @@ class MarketListState extends State<MarketList>
   List<dynamic> artList = [];
   void getList() {
     if (!noMore) {
-      ArtService.getMarketArts(
-              pageNo: pageNo,
-              type: widget.type,
-              query: widget.query,
-              sortKey: sortKey)
+      ArtService.getUserShow(pageNo: pageNo, type: widget.type, uid: widget.uid)
           .then((value) => {
                 setState(() {
-                  List<MarketItem> data = value;
+                  List<Art> data = value;
                   artList.addAll(data);
                   if (data.length < pageSize) {
                     noMore = true;
@@ -52,7 +49,7 @@ class MarketListState extends State<MarketList>
     }
   }
 
-  void goDetail(MarketItem ele) {
+  void goDetail(Art ele) {
     Get.toNamed(ArtDetail.routeName, arguments: {
       'goodId': ele.id,
       'artType': widget.type == 0 ? ArtType.main : ArtType.second,
@@ -88,34 +85,50 @@ class MarketListState extends State<MarketList>
     }
     double itemWidth = (MediaQuery.of(context).size.width - padding * 3) / 2;
     double childAspectRatio = itemWidth / (itemWidth + 70);
-    return EasyRefresh(
-      onRefresh: () async {
-        onRefresh();
-      },
-      onLoad: () async {
-        getList();
-      },
-      child: artList.isNotEmpty
-          ? GridView.builder(
-              padding: EdgeInsets.all(padding),
-              itemCount: artList.length,
-              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 2,
-                  mainAxisSpacing: 15,
-                  crossAxisSpacing: padding,
-                  childAspectRatio: childAspectRatio),
-              itemBuilder: (context, index) {
-                var item = artList[index];
-                return MarketSmallCard(
-                  artData: item,
-                  onTap: () => goDetail(item),
-                );
-              },
-            )
-          : ListView(
-              children: const [EmptyPlaceholder()],
-            ),
-    );
+    return EasyRefresh.builder(
+        onRefresh: () async {
+          onRefresh();
+        },
+        onLoad: () async {
+          getList();
+        },
+        header: const MaterialHeader(),
+        childBuilder: (context, physics) {
+          return CustomScrollView(
+            key: PageStorageKey<String>('${widget.type}'),
+            physics: physics,
+            slivers: [
+              SliverOverlapInjector(
+                handle:
+                    NestedScrollView.sliverOverlapAbsorberHandleFor(context),
+              ),
+              artList.isNotEmpty
+                  ? SliverPadding(
+                      padding: EdgeInsets.all(padding),
+                      sliver: SliverGrid(
+                          delegate: SliverChildBuilderDelegate(
+                            (context, index) {
+                              var item = artList[index];
+                              return MarketSmallCard(
+                                artData: item,
+                                onTap: () => goDetail(item),
+                              );
+                            },
+                            childCount: artList.length,
+                          ),
+                          gridDelegate:
+                              SliverGridDelegateWithFixedCrossAxisCount(
+                                  crossAxisCount: 2,
+                                  mainAxisSpacing: 15,
+                                  crossAxisSpacing: padding,
+                                  childAspectRatio: childAspectRatio)),
+                    )
+                  : const SliverToBoxAdapter(
+                      child: EmptyPlaceholder(),
+                    )
+            ],
+          );
+        });
   }
 }
 
@@ -123,7 +136,7 @@ class MarketSmallCard extends StatelessWidget {
   const MarketSmallCard({Key? key, required this.artData, this.onTap})
       : super(key: key);
 
-  final MarketItem artData;
+  final Art artData;
   final void Function()? onTap;
 
   @override
@@ -184,7 +197,7 @@ class MarketSmallCard extends StatelessWidget {
                       height: 6,
                     ),
                     Text(
-                      '￥${artData.price != 0 ? artData.price : artData.originPrice}',
+                      '￥${artData.price}',
                       style: const TextStyle(
                         fontWeight: FontWeight.w500,
                         fontSize: 15,

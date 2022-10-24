@@ -71,6 +71,8 @@ class _BulletinListState extends State<BulletinList> {
             itemCount: bulletins.length,
             separatorBuilder: (context, index) => const Divider(
               height: 1,
+              indent: 10,
+              endIndent: 10,
             ),
             itemBuilder: (context, index) {
               var item = bulletins[index];
@@ -82,7 +84,8 @@ class _BulletinListState extends State<BulletinList> {
                         arguments: {'title': item.title, 'url': item.slug});
                   },
                   child: Padding(
-                    padding: const EdgeInsets.all(20),
+                    padding: const EdgeInsets.symmetric(
+                        vertical: 20, horizontal: 12),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [

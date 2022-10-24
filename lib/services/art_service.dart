@@ -258,4 +258,29 @@ class ArtService {
     Alert.reqFail(response.data['msg']);
     return false;
   }
+
+  static Future<List<Art>> getUserShow(
+      {required int pageNo, required int type, required String uid}) async {
+    var queryParameters = {
+      'pageNo': pageNo,
+      'pageSize': 12,
+      'type': type,
+      'uid': uid
+    };
+    Response response;
+    response = await Future.delayed(
+        const Duration(milliseconds: 500),
+        () => HttpUtils()
+            .dio
+            .get('/goods/exhibit', queryParameters: queryParameters));
+    if (response.data['code'] == 0) {
+      NormalResp data = response.data;
+      return (data['data'] as List<dynamic>)
+          .map((e) => Art.fromJson(e as NormalResp))
+          .toList();
+    }
+    print(response.data);
+    Alert.reqFail(response.data['msg']);
+    return [];
+  }
 }

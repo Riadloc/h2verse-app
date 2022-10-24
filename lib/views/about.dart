@@ -28,7 +28,7 @@ class _AboutState extends State<About> {
             onTap: () {
               Get.toNamed(MyWebview.routeName, arguments: {
                 'title': '关于氢宇宙',
-                'url': 'https://h2verse.art/agreement/platform'
+                'url': 'https://h5.h2verse.art/agreement/platform'
               });
             },
           ),
@@ -43,7 +43,7 @@ class _AboutState extends State<About> {
             onTap: () {
               Get.toNamed(MyWebview.routeName, arguments: {
                 'title': '用户协议',
-                'url': 'https://h2verse.art/agreement/user'
+                'url': 'https://h5.h2verse.art/agreement/user'
               });
             },
           ),
@@ -58,7 +58,7 @@ class _AboutState extends State<About> {
             onTap: () {
               Get.toNamed(MyWebview.routeName, arguments: {
                 'title': '隐私协议',
-                'url': 'https://h2verse.art/agreement/privacy'
+                'url': 'https://h5.h2verse.art/agreement/privacy'
               });
             },
           ),

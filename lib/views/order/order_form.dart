@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:h2verse_app/models/art_model.dart';
 import 'package:h2verse_app/models/bank_card_model.dart';
 import 'package:h2verse_app/models/order_result_model.dart';
+import 'package:h2verse_app/providers/common_provider.dart';
 import 'package:h2verse_app/providers/user_provider.dart';
 import 'package:h2verse_app/services/order_service.dart';
 import 'package:h2verse_app/services/wallet_service.dart';
@@ -33,6 +34,7 @@ class _OrderFormState extends State<OrderForm> {
   int count = 1;
   bool loading = false;
   String bankId = '';
+  int payStrategy = 1;
   List<BankCard> bankCardList = [];
 
   String get orderPrice => (count * detailData.price).toStringAsFixed(2);
@@ -51,7 +53,7 @@ class _OrderFormState extends State<OrderForm> {
   }
 
   Future createOrder() async {
-    if (bankId == '') {
+    if (payStrategy == 0 && bankId.isEmpty) {
       Toast.show('请选择支付银行卡');
       return;
     }
@@ -71,7 +73,7 @@ class _OrderFormState extends State<OrderForm> {
                   Get.back(canPop: true, closeOverlays: true);
                 }))
           };
-      if (res.token != '') {
+      if (res.token != null && res.token != '') {
         Toast.show('已发送验证码至您的手机');
         Get.bottomSheet(
           OptModal(
@@ -80,7 +82,7 @@ class _OrderFormState extends State<OrderForm> {
               bool isSuccess = await OrderService.doTrade(
                   orderId: res.orderId,
                   payKey: pin,
-                  token: res.token,
+                  token: res.token!,
                   orderNo: res.orderNo);
               if (isSuccess) {
                 success();
@@ -90,6 +92,8 @@ class _OrderFormState extends State<OrderForm> {
           enableDrag: false,
           isDismissible: false,
         );
+      } else if (res.url != null && res.url != '') {
+        //
       } else {
         bool isSuccess = await OrderService.doSpecialTrade(
           orderId: res.orderId,
@@ -107,7 +111,12 @@ class _OrderFormState extends State<OrderForm> {
   @override
   void initState() {
     super.initState();
-    getBankList();
+    var apollo = Provider.of<CommonProvider>(context, listen: false).apollo;
+    payStrategy =
+        apollo.payStrategy.isNotEmpty ? int.parse(apollo.payStrategy) : 0;
+    if (payStrategy == 0) {
+      getBankList();
+    }
   }
 
   @override
@@ -178,75 +187,97 @@ class _OrderFormState extends State<OrderForm> {
                   '支付方式',
                   style: TextStyle(fontSize: 15, fontWeight: FontWeight.w500),
                 ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    const Text(
-                      '银行卡快捷支付',
-                      style: TextStyle(fontWeight: FontWeight.w500),
-                    ),
-                    Consumer<UserProvider>(
-                      builder: (context, value, child) {
-                        var user = value.user;
-                        // if (!user.isBindPayPassword) {
-                        //   return TextButton(
-                        //       onPressed: () {
-                        //         //
-                        //       },
-                        //       child: const Text(
-                        //         '设置支付密码 >',
-                        //         style: TextStyle(color: Colors.red),
-                        //       ));
-                        // }
-                        return Checkbox(
-                          checkColor: Colors.white,
-                          shape: const CircleBorder(),
-                          value: true,
-                          materialTapTargetSize:
-                              MaterialTapTargetSize.shrinkWrap,
-                          onChanged: (bool? value) {},
-                        );
-                      },
-                    ),
-                  ],
-                )
-              ])),
-          CommonFieldCard(
-              child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                const Text(
-                  '支付银行卡',
-                  style: TextStyle(fontSize: 15, fontWeight: FontWeight.w500),
-                ),
-                Column(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    for (int i = 0; i < bankCardList.length; i++)
-                      Row(
+                payStrategy == 0
+                    ? Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Text(
-                            formatBankNo(bankCardList[i].bankNo),
-                            style: const TextStyle(fontWeight: FontWeight.w500),
+                          const Text(
+                            '银行卡快捷支付',
+                            style: TextStyle(fontWeight: FontWeight.w500),
+                          ),
+                          Consumer<UserProvider>(
+                            builder: (context, value, child) {
+                              var user = value.user;
+                              // if (!user.isBindPayPassword) {
+                              //   return TextButton(
+                              //       onPressed: () {
+                              //         //
+                              //       },
+                              //       child: const Text(
+                              //         '设置支付密码 >',
+                              //         style: TextStyle(color: Colors.red),
+                              //       ));
+                              // }
+                              return Checkbox(
+                                checkColor: Colors.white,
+                                shape: const CircleBorder(),
+                                value: true,
+                                materialTapTargetSize:
+                                    MaterialTapTargetSize.shrinkWrap,
+                                onChanged: (bool? value) {},
+                              );
+                            },
+                          ),
+                        ],
+                      )
+                    : Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          const Text(
+                            '支付宝',
+                            style: TextStyle(fontWeight: FontWeight.w500),
                           ),
                           Checkbox(
                             checkColor: Colors.white,
                             shape: const CircleBorder(),
-                            value: bankId == bankCardList[i].id,
+                            value: true,
                             materialTapTargetSize:
                                 MaterialTapTargetSize.shrinkWrap,
-                            onChanged: (bool? value) {
-                              setState(() {
-                                bankId = value! ? bankCardList[i].id : '';
-                              });
-                            },
-                          )
+                            onChanged: (bool? value) {},
+                          ),
                         ],
                       )
-                  ],
-                )
               ])),
+          payStrategy == 0
+              ? CommonFieldCard(
+                  child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                      const Text(
+                        '支付银行卡',
+                        style: TextStyle(
+                            fontSize: 15, fontWeight: FontWeight.w500),
+                      ),
+                      Column(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          for (int i = 0; i < bankCardList.length; i++)
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                  formatBankNo(bankCardList[i].bankNo),
+                                  style: const TextStyle(
+                                      fontWeight: FontWeight.w500),
+                                ),
+                                Checkbox(
+                                  checkColor: Colors.white,
+                                  shape: const CircleBorder(),
+                                  value: bankId == bankCardList[i].id,
+                                  materialTapTargetSize:
+                                      MaterialTapTargetSize.shrinkWrap,
+                                  onChanged: (bool? value) {
+                                    setState(() {
+                                      bankId = value! ? bankCardList[i].id : '';
+                                    });
+                                  },
+                                )
+                              ],
+                            )
+                        ],
+                      )
+                    ]))
+              : Container(),
           CommonFieldCard(
               child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,

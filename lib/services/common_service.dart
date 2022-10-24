@@ -50,7 +50,6 @@ class CommonService {
   }
 
   static Future getAppHomeInitialInfo() async {
-    print(111);
     Response response = await HttpUtils().dio.get('/app/homeInitial');
     if (response.data['code'] == 0) {
       var data = response.data['data'];

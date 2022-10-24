@@ -50,9 +50,11 @@ class _HomeWrapperState extends State<HomeWrapper> {
           type: BottomNavigationBarType.fixed,
           backgroundColor: const Color.fromRGBO(240, 242, 240, 1),
           selectedFontSize: 12,
+          showUnselectedLabels: false,
+          // showSelectedLabels: false,
           items: const <BottomNavigationBarItem>[
             BottomNavigationBarItem(
-              icon: Icon(Icons.home_outlined),
+              icon: Icon(Icons.home),
               activeIcon: Icon(Icons.home),
               label: '首页',
             ),

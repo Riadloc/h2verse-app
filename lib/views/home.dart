@@ -2,6 +2,7 @@ import 'package:easy_refresh/easy_refresh.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:h2verse_app/constants/theme.dart';
 import 'package:h2verse_app/views/fuel/fule_list.dart';
 import 'package:lottie/lottie.dart';
 import 'package:h2verse_app/constants/constants.dart';
@@ -32,10 +33,6 @@ class _HomeState extends State<Home> with AutomaticKeepAliveClientMixin {
   bool noMore = false;
   final int pageSize = 8;
   final int padding = 12;
-  final List<String> banners = [
-    'https://pearmeta-1253493520.file.myqcloud.com/banner0810.jpg',
-    'https://pearmeta-1253493520.file.myqcloud.com/banner_0722m.jpg',
-  ];
   final colorizeColors = [
     Colors.black,
     Colors.blue,
@@ -94,27 +91,27 @@ class _HomeState extends State<Home> with AutomaticKeepAliveClientMixin {
               style: GoogleFonts.kalam(fontWeight: FontWeight.bold),
             ),
             backgroundColor: Colors.white,
-            expandedHeight: 200,
-            actions: [
-              ElevatedButton(
-                  onPressed: () {
-                    Get.toNamed(SearchScreen.routeName);
-                  },
-                  style: ElevatedButton.styleFrom(
-                      minimumSize: const Size(30, 30),
-                      elevation: 0,
-                      backgroundColor: const Color.fromRGBO(240, 242, 240, 1),
-                      shape: const CircleBorder(),
-                      padding: const EdgeInsets.all(0),
-                      tapTargetSize: MaterialTapTargetSize.shrinkWrap),
-                  child: const Icon(
-                    Icons.search,
-                    size: 22,
-                  )),
-              const SizedBox(
-                width: 12,
-              ),
-            ],
+            expandedHeight: 260,
+            // actions: [
+            //   ElevatedButton(
+            //       onPressed: () {
+            //         Get.toNamed(SearchScreen.routeName);
+            //       },
+            //       style: ElevatedButton.styleFrom(
+            //           minimumSize: const Size(30, 30),
+            //           elevation: 0,
+            //           backgroundColor: const Color.fromRGBO(240, 242, 240, 1),
+            //           shape: const CircleBorder(),
+            //           padding: const EdgeInsets.all(0),
+            //           tapTargetSize: MaterialTapTargetSize.shrinkWrap),
+            //       child: const Icon(
+            //         Icons.search,
+            //         size: 22,
+            //       )),
+            //   const SizedBox(
+            //     width: 12,
+            //   ),
+            // ],
             stretch: true,
             flexibleSpace: FlexibleSpaceBar(
               background: ClipRRect(
@@ -131,8 +128,8 @@ class _HomeState extends State<Home> with AutomaticKeepAliveClientMixin {
                         stops: [0, 0.49, 1]),
                   ),
                   child: Lottie.asset(
-                    'lib/assets/lottie/shaking-head-when-driving-front-view.zip',
-                    fit: BoxFit.contain,
+                    'lib/assets/lottie/96849-astronaut-in-space.zip',
+                    fit: BoxFit.fitWidth,
                   ),
                 ),
               ),
@@ -202,7 +199,7 @@ class _HomeState extends State<Home> with AutomaticKeepAliveClientMixin {
                         ArtSmallCard(
                           artData: artList.first,
                           vw: mainItemWidth,
-                          radius: 12,
+                          radius: 6,
                         )
                       ],
                     )
@@ -215,6 +212,7 @@ class _HomeState extends State<Home> with AutomaticKeepAliveClientMixin {
                       (e) => ArtSmallCard(
                         artData: e,
                         vw: itemWidth,
+                        radius: 6,
                       ),
                     )
                     .toList(),
@@ -225,7 +223,7 @@ class _HomeState extends State<Home> with AutomaticKeepAliveClientMixin {
                   ElevatedButton(
                       style: ElevatedButton.styleFrom(
                         elevation: 0,
-                        backgroundColor: Colors.grey.shade300,
+                        backgroundColor: Colors.grey.shade200,
                         tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                         minimumSize: const Size(0, 30),
                       ),
@@ -275,9 +273,9 @@ class ArtSmallCard extends StatelessWidget {
       margin: const EdgeInsets.only(bottom: 20),
       clipBehavior: Clip.hardEdge,
       decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(radius!),
-      ),
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(radius!),
+          boxShadow: kCardBoxShadow),
       child: Card(
           elevation: 0,
           child: InkWell(
@@ -299,49 +297,30 @@ class ArtSmallCard extends StatelessWidget {
               Container(
                 width: double.infinity,
                 padding: const EdgeInsets.all(10),
-                child: Stack(
-                  children: [
-                    Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            artData.name,
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                            style: const TextStyle(
-                                fontWeight: FontWeight.bold,
-                                fontSize: 18,
-                                height: 1.5),
-                          ),
-                          Text(
-                            '${artData.ownner}',
-                            style: TextStyle(
-                                color: Theme.of(context).colorScheme.primary,
-                                height: 1.5),
-                          ),
-                          Text(
-                            '￥${artData.price}',
-                            style: const TextStyle(
-                                height: 1.5, fontWeight: FontWeight.w500),
-                          )
-                        ]),
-                    Positioned(
-                      bottom: 0,
-                      right: 0,
-                      child: ClipOval(
-                        child: Container(
-                          color: Colors.grey.shade900,
-                          padding: const EdgeInsets.all(4),
-                          child: const Icon(
-                            Icons.arrow_forward,
-                            color: Colors.white,
-                            size: 14,
-                          ),
-                        ),
+                child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        artData.name,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: const TextStyle(
+                            fontWeight: FontWeight.w500,
+                            fontSize: 18,
+                            height: 1.5),
                       ),
-                    )
-                  ],
-                ),
+                      Text(
+                        '${artData.ownner}',
+                        style: TextStyle(
+                            color: Theme.of(context).colorScheme.primary,
+                            height: 1.5),
+                      ),
+                      Text(
+                        '￥${artData.price}',
+                        style: const TextStyle(
+                            height: 1.5, fontWeight: FontWeight.w500),
+                      )
+                    ]),
               )
             ]),
           )),

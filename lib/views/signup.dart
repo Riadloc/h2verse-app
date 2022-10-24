@@ -218,7 +218,7 @@ class _SignupState extends State<Signup> {
                         onPressed: () {
                           Get.toNamed(MyWebview.routeName, arguments: {
                             'title': '用户协议',
-                            'url': 'https://h2verse.art/agreement/user'
+                            'url': 'https://h5.h2verse.art/agreement/user'
                           });
                         },
                         child: const Text('《用户协议》')),
@@ -229,7 +229,7 @@ class _SignupState extends State<Signup> {
                         onPressed: () {
                           Get.toNamed(MyWebview.routeName, arguments: {
                             'title': '隐私协议',
-                            'url': 'https://h2verse.art/agreement/privacy'
+                            'url': 'https://h5.h2verse.art/agreement/privacy'
                           });
                         },
                         child: const Text('《隐私政策》')),

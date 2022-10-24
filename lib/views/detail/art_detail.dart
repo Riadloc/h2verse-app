@@ -14,6 +14,7 @@ import 'package:h2verse_app/views/identity.dart';
 import 'package:h2verse_app/constants/enum.dart';
 import 'package:h2verse_app/views/order/order_form.dart';
 import 'package:h2verse_app/views/search_screen.dart';
+import 'package:h2verse_app/views/user/user_show.dart';
 import 'package:h2verse_app/widgets/art_chain_info.dart';
 import 'package:h2verse_app/widgets/back_button.dart';
 import 'package:h2verse_app/widgets/cached_image.dart';
@@ -307,6 +308,13 @@ class _ArtDetailState extends State<ArtDetail> {
 
   List<Widget> buildBasicInfo(Art data) {
     var list = [
+      {
+        'label': '创作者',
+        'value': data.ownner,
+        "onTap": () {
+          Get.toNamed(UserShow.routeName, arguments: {"uid": data.ownerUuid});
+        }
+      },
       {'label': '拥有者', 'value': data.ownner},
       {'label': '发行', 'value': data.copies},
     ];
@@ -315,30 +323,41 @@ class _ArtDetailState extends State<ArtDetail> {
         {'label': '流通', 'value': data.realCopies ?? data.copies},
       );
     }
-    if (data.showNodes == 1) {
+    if (data.showNodes == 1 &&
+        data.operatorStatus != GoodOperatorStatus.SOLD_OUT) {
       list.add(
         {'label': '预约', 'value': data.reservation ?? 0},
       );
+    }
+    if (params['artType'] == ArtType.main) {
+      list.removeAt(1);
     }
     List<Widget> widgets = [];
     for (var i = 0; i < list.length; i++) {
       var ele = list[i];
       widgets.add(Expanded(
-        child: Column(
-          children: [
-            Text(
-              ele['label'] as String,
-              style: const TextStyle(color: Color.fromRGBO(141, 152, 175, 1)),
+        child: Ink(
+          child: InkWell(
+            onTap: ele['onTap'] as Function()?,
+            child: Column(
+              children: [
+                Text(
+                  '${ele['value']}',
+                  overflow: TextOverflow.ellipsis,
+                  maxLines: 1,
+                  style: const TextStyle(fontWeight: FontWeight.w500),
+                ),
+                const SizedBox(
+                  height: 4,
+                ),
+                Text(
+                  ele['label'] as String,
+                  style:
+                      const TextStyle(color: Color.fromRGBO(141, 152, 175, 1)),
+                ),
+              ],
             ),
-            const SizedBox(
-              height: 4,
-            ),
-            Text(
-              '${ele['value']}',
-              overflow: TextOverflow.ellipsis,
-              maxLines: 1,
-            )
-          ],
+          ),
         ),
       ));
       if (i != list.length - 1) {
@@ -390,19 +409,17 @@ class _ArtDetailState extends State<ArtDetail> {
         } else if (snapshot.hasError) {
         } else if (snapshot.hasData) {
           Art detailData = snapshot.data!;
-          print(detailData.pictures);
           return Scaffold(
               extendBodyBehindAppBar: true,
               appBar: AppBar(
-                backgroundColor: Colors.white.withAlpha(titleAlpha),
-                elevation: 0,
-                title: Text(detailData.name,
-                    style:
-                        TextStyle(color: Colors.black.withAlpha(titleAlpha))),
-                // titleTextStyle:
-                //     TextStyle(color: Colors.black.withAlpha(titleAlpha)),
-                leading: const CircleBackButton(),
-              ),
+                  backgroundColor: Colors.white.withAlpha(titleAlpha),
+                  elevation: 0,
+                  title: Text(detailData.name,
+                      style:
+                          TextStyle(color: Colors.black.withAlpha(titleAlpha))),
+                  // titleTextStyle:
+                  //     TextStyle(color: Colors.black.withAlpha(titleAlpha)),
+                  leading: const CircleBackButton()),
               body: MediaQuery.removePadding(
                   context: context,
                   removeTop: true,
@@ -450,9 +467,9 @@ class _ArtDetailState extends State<ArtDetail> {
                                             color: Colors.transparent,
                                           ),
                                           borderRadius: BorderRadius.all(
-                                              Radius.circular(16)))),
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 16, vertical: 16),
+                                              Radius.circular(8)))),
+                                  padding:
+                                      const EdgeInsets.symmetric(vertical: 16),
                                   child: Row(
                                     mainAxisAlignment: MainAxisAlignment.start,
                                     children: buildBasicInfo(detailData),
@@ -494,7 +511,7 @@ class _ArtDetailState extends State<ArtDetail> {
                           }),
                       const Divider(
                         indent: 10,
-                        endIndent: 20,
+                        endIndent: 10,
                         height: 1,
                       ),
                       TapTile(

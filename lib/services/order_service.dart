@@ -29,7 +29,7 @@ class OrderService {
   }
 
   static Future<OrderResult?> createOrder(
-      {required String goodId, required String bankId, int count = 1}) async {
+      {required String goodId, String bankId = '', int count = 1}) async {
     var data = {'goodId': goodId, 'bankId': bankId, 'count': count};
     Response response;
     response = await HttpUtils().dio.post('/payment/create', data: data);
