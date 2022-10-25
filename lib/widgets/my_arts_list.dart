@@ -73,11 +73,6 @@ class _MyArtsListState extends State<MyArtsList>
     if (initLoading) {
       return MarketSkeleton(padding: padding);
     }
-    if (artList.isEmpty) {
-      return const Center(
-        child: EmptyPlaceholder(),
-      );
-    }
     double itemWidth = (MediaQuery.of(context).size.width - padding * 3) / 2;
     double childAspectRatio = itemWidth / (itemWidth + 50);
     return EasyRefresh(
@@ -86,7 +81,6 @@ class _MyArtsListState extends State<MyArtsList>
         child: artList.isNotEmpty
             ? GridView.builder(
                 padding: EdgeInsets.all(padding),
-                shrinkWrap: true,
                 itemCount: artList.length,
                 gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                     crossAxisCount: 2,
@@ -112,13 +106,16 @@ class MyArtSmallCard extends StatelessWidget {
 
   final Art artData;
   final double vw;
+  final double raduis = 6;
 
   @override
   Widget build(BuildContext context) {
     return Ink(
       width: vw,
-      decoration:
-          const BoxDecoration(color: Colors.white, boxShadow: kCardBoxShadow),
+      decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(raduis),
+          boxShadow: kCardBoxShadow),
       child: Card(
           elevation: 0,
           child: InkWell(
@@ -133,12 +130,18 @@ class MyArtSmallCard extends StatelessWidget {
                 Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
               Stack(
                 children: [
-                  AspectRatio(
-                      aspectRatio: 1,
-                      child: Image.network(
-                        artData.cover,
-                        fit: BoxFit.cover,
-                      )),
+                  ClipRRect(
+                    borderRadius: BorderRadius.only(
+                      topLeft: Radius.circular(raduis),
+                      topRight: Radius.circular(raduis),
+                    ),
+                    child: AspectRatio(
+                        aspectRatio: 1,
+                        child: Image.network(
+                          artData.cover,
+                          fit: BoxFit.cover,
+                        )),
+                  ),
                   Positioned(
                       bottom: 0,
                       left: 0,
@@ -174,7 +177,7 @@ class BlurChip extends StatelessWidget {
       child: BackdropFilter(
         filter: ImageFilter.blur(sigmaX: 10.0, sigmaY: 10.0),
         child: Container(
-          color: Colors.grey.shade200.withOpacity(0.5),
+          color: Colors.white.withOpacity(0.1),
           padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 6),
           alignment: Alignment.center,
           child: Text(

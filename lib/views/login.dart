@@ -1,15 +1,13 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_net_captcha/flutter_net_captcha.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:h2verse_app/constants/theme.dart';
 import 'package:h2verse_app/providers/user_provider.dart';
 import 'package:h2verse_app/services/user_service.dart';
 import 'package:h2verse_app/utils/toast.dart';
 import 'package:h2verse_app/views/home_wrapper.dart';
 import 'package:h2verse_app/views/my_webview.dart';
 import 'package:h2verse_app/views/signup.dart';
-import 'package:h2verse_app/widgets/cached_image.dart';
 
 import 'package:h2verse_app/widgets/counter_down_text_button.dart';
 import 'package:h2verse_app/widgets/login_input.dart';
@@ -67,10 +65,11 @@ class _LoginState extends State<Login> {
     if (phone.isEmpty) {
       Toast.show('请先输入手机号');
     } else {
-      YidunCaptcha.show((object) {
-        VerifyCodeResponse resp = object;
-        if (resp.result == true) {
-          String code = resp.validate as String;
+      YidunCaptcha().show((object) {
+        var resp = object;
+        print(resp['result'].runtimeType);
+        if (resp['result'] == 'true') {
+          String code = resp['validate'] as String;
           UserService.sendSms(phone, code).then((value) {
             if (value != null) {
               Toast.show(value == 0 ? '发送验证码成功' : '请稍后发送');
@@ -103,41 +102,19 @@ class _LoginState extends State<Login> {
           Stack(
             children: [
               Image.asset('lib/assets/materials.webp'),
-              Positioned.fill(
-                child: Center(
-                  child: Text(
-                    'H2VERSE',
-                    style: GoogleFonts.kalam(
-                      color: Colors.white,
-                      fontSize: 28,
-                      fontWeight: FontWeight.bold,
-                      shadows: const <Shadow>[
-                        Shadow(
-                          offset: Offset(3.0, 3.0),
-                          blurRadius: 3.0,
-                          color: Color.fromARGB(255, 0, 0, 0),
-                        ),
-                        Shadow(
-                          offset: Offset(3.0, 3.0),
-                          blurRadius: 8.0,
-                          color: Colors.lightBlue,
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              ),
               Positioned(
                 bottom: -10,
                 left: 0,
                 right: 0,
                 child: Container(
                   width: double.infinity,
-                  height: 40,
+                  height: 30,
                   decoration: const BoxDecoration(
                     borderRadius: BorderRadius.only(
-                        topLeft: Radius.circular(30),
-                        topRight: Radius.circular(30)),
+                      topLeft: Radius.circular(30),
+                      topRight: Radius.circular(30),
+                    ),
+                    boxShadow: kCardBoxShadow,
                     color: Colors.white,
                   ),
                 ),
@@ -158,7 +135,7 @@ class _LoginState extends State<Login> {
                 ),
                 LoginInput(
                   hintText: '手机号',
-                  icon: CupertinoIcons.phone_circle,
+                  icon: Icons.person_outline,
                   type: InputType.phone,
                   controller: _phoneController,
                 ),
@@ -168,7 +145,7 @@ class _LoginState extends State<Login> {
                 showCode
                     ? LoginInput(
                         hintText: '验证码',
-                        icon: CupertinoIcons.number_circle,
+                        icon: Icons.tag,
                         type: InputType.captcha,
                         controller: _captchaController,
                         suffix: CounterDownTextButton(
@@ -183,7 +160,7 @@ class _LoginState extends State<Login> {
                       )
                     : LoginInput(
                         hintText: '密码',
-                        icon: CupertinoIcons.lock_circle,
+                        icon: Icons.lock_outline,
                         type: InputType.password,
                         obscure: obscure,
                         controller: _passwordController,
@@ -195,8 +172,8 @@ class _LoginState extends State<Login> {
                           },
                           padding: const EdgeInsets.all(0),
                           icon: Icon(obscure
-                              ? CupertinoIcons.eye
-                              : CupertinoIcons.eye_slash),
+                              ? Icons.visibility_outlined
+                              : Icons.visibility_off_outlined),
                           iconSize: 18,
                         ),
                       ),

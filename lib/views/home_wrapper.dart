@@ -64,8 +64,8 @@ class _HomeWrapperState extends State<HomeWrapper> {
               label: '探索',
             ),
             BottomNavigationBarItem(
-              icon: Icon(Icons.token_outlined),
-              activeIcon: Icon(Icons.token),
+              icon: Icon(Icons.catching_pokemon_outlined),
+              activeIcon: Icon(Icons.catching_pokemon),
               label: '藏品',
             ),
             BottomNavigationBarItem(

@@ -134,6 +134,13 @@ packages:
       url: "https://pub.flutter-io.cn"
     source: hosted
     version: "1.0.1"
+  captcha_plugin_flutter:
+    dependency: "direct main"
+    description:
+      name: captcha_plugin_flutter
+      url: "https://pub.flutter-io.cn"
+    source: hosted
+    version: "1.0.8"
   carousel_slider:
     dependency: "direct main"
     description:
@@ -218,13 +225,6 @@ packages:
       url: "https://pub.flutter-io.cn"
     source: hosted
     version: "0.17.2"
-  cupertino_icons:
-    dependency: "direct main"
-    description:
-      name: cupertino_icons
-      url: "https://pub.flutter-io.cn"
-    source: hosted
-    version: "1.0.5"
   dart_style:
     dependency: transitive
     description:
@@ -391,13 +391,6 @@ packages:
       url: "https://pub.flutter-io.cn"
     source: hosted
     version: "2.2.9"
-  flutter_net_captcha:
-    dependency: "direct main"
-    description:
-      name: flutter_net_captcha
-      url: "https://pub.flutter-io.cn"
-    source: hosted
-    version: "2.0.3"
   flutter_plugin_android_lifecycle:
     dependency: transitive
     description:

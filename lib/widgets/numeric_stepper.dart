@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class NumericStepper extends StatelessWidget {
@@ -33,7 +32,7 @@ class NumericStepper extends StatelessWidget {
               splashColor: Colors.transparent,
               highlightColor: Colors.transparent,
               icon: const Icon(
-                CupertinoIcons.minus,
+                Icons.remove,
                 size: 20,
               )),
           Container(
@@ -52,7 +51,7 @@ class NumericStepper extends StatelessWidget {
               splashColor: Colors.transparent,
               highlightColor: Colors.transparent,
               icon: const Icon(
-                CupertinoIcons.add,
+                Icons.add,
                 size: 20,
               ))
         ],

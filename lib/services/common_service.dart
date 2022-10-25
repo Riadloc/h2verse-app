@@ -10,7 +10,7 @@ typedef NormalResp = Map<String, dynamic>;
 class CommonService {
   static Future<List<Bulletin>> getBulletins(
       {required int pageNo, required int pageSize}) async {
-    EasyLoading.show(status: 'loading');
+    EasyLoading.show(status: '机器人处理中...');
     Response response;
     response = await HttpUtils().dio.get('/common/docs',
         queryParameters: {'pageNo': pageNo, 'pageSize': pageSize});

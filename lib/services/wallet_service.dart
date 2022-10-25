@@ -7,7 +7,7 @@ import 'package:h2verse_app/utils/http.dart';
 
 class WalletService {
   static Future<List<BankCard>> getBankList() async {
-    EasyLoading.show(status: 'loading');
+    EasyLoading.show(status: '机器人处理中...');
     Response response;
     response = await HttpUtils().dio.get('/wallet/bankList');
     EasyLoading.dismiss();

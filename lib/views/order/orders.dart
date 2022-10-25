@@ -16,7 +16,6 @@ class _OrdersState extends State<Orders> {
     Tab(text: '待支付'),
     Tab(text: '已购买'),
     Tab(text: '已取消'),
-    Tab(text: '已转出'),
   ];
 
   @override

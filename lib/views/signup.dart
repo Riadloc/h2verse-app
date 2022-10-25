@@ -1,6 +1,4 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_net_captcha/flutter_net_captcha.dart';
 import 'package:get/get.dart';
 import 'package:h2verse_app/providers/user_provider.dart';
 import 'package:h2verse_app/services/user_service.dart';
@@ -9,7 +7,6 @@ import 'package:h2verse_app/views/home_wrapper.dart';
 import 'package:h2verse_app/views/login.dart';
 import 'package:h2verse_app/utils/yindun_captcha.dart';
 import 'package:h2verse_app/views/my_webview.dart';
-import 'package:h2verse_app/widgets/cached_image.dart';
 
 import 'package:h2verse_app/widgets/counter_down_text_button.dart';
 import 'package:h2verse_app/widgets/login_input.dart';
@@ -37,8 +34,8 @@ class _SignupState extends State<Signup> {
     if (phone.isEmpty) {
       Toast.show('请先输入手机号');
     } else {
-      YidunCaptcha.show((object) {
-        VerifyCodeResponse resp = object;
+      YidunCaptcha().show((object) {
+        var resp = object;
         if (resp.result == true) {
           String code = resp.validate as String;
           UserService.sendSms(phone, code).then((value) {
@@ -139,7 +136,7 @@ class _SignupState extends State<Signup> {
                 ),
                 LoginInput(
                   hintText: '手机号',
-                  icon: CupertinoIcons.phone_circle,
+                  icon: Icons.sim_card_outlined,
                   type: InputType.phone,
                   controller: _phoneController,
                 ),
@@ -148,7 +145,7 @@ class _SignupState extends State<Signup> {
                 ),
                 LoginInput(
                   hintText: '验证码',
-                  icon: CupertinoIcons.number_circle,
+                  icon: Icons.tag,
                   type: InputType.captcha,
                   controller: _captchaController,
                   suffix: CounterDownTextButton(
@@ -166,7 +163,7 @@ class _SignupState extends State<Signup> {
                 ),
                 LoginInput(
                   hintText: '密码',
-                  icon: CupertinoIcons.lock_circle,
+                  icon: Icons.lock_outline,
                   obscure: obscure,
                   controller: _passwordController,
                   suffix: IconButton(
@@ -177,8 +174,8 @@ class _SignupState extends State<Signup> {
                     },
                     padding: const EdgeInsets.all(0),
                     icon: Icon(obscure
-                        ? CupertinoIcons.eye
-                        : CupertinoIcons.eye_slash),
+                        ? Icons.visibility_outlined
+                        : Icons.visibility_off_outlined),
                     iconSize: 18,
                   ),
                 ),

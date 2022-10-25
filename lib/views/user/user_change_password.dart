@@ -1,6 +1,4 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_net_captcha/flutter_net_captcha.dart';
 import 'package:get/get.dart';
 import 'package:h2verse_app/providers/user_provider.dart';
 import 'package:h2verse_app/services/user_service.dart';
@@ -33,8 +31,8 @@ class _UserChangePasswordState extends State<UserChangePassword> {
   final _captchaController = TextEditingController();
 
   void onSendSms() {
-    YidunCaptcha.show((object) {
-      VerifyCodeResponse resp = object;
+    YidunCaptcha().show((object) {
+      var resp = object;
       if (resp.result == true) {
         String code = resp.validate as String;
         UserService.sendSms(phone, code).then((value) {
@@ -158,7 +156,7 @@ class _UserChangePasswordState extends State<UserChangePassword> {
                 children: [
                   LoginInput(
                     hintText: '新密码',
-                    icon: CupertinoIcons.lock_circle,
+                    icon: Icons.lock_outline,
                     type: InputType.password,
                     obscure: obscure,
                     controller: _passwordController,
@@ -177,8 +175,8 @@ class _UserChangePasswordState extends State<UserChangePassword> {
                         padding: const EdgeInsets.all(0),
                         icon: Icon(
                           obscure
-                              ? CupertinoIcons.eye
-                              : CupertinoIcons.eye_slash,
+                              ? Icons.visibility_outlined
+                              : Icons.visibility_off_outlined,
                           size: 18,
                         )),
                   ),
@@ -187,7 +185,7 @@ class _UserChangePasswordState extends State<UserChangePassword> {
                   ),
                   LoginInput(
                     hintText: '验证码',
-                    icon: CupertinoIcons.number_circle,
+                    icon: Icons.tag,
                     type: InputType.captcha,
                     controller: _captchaController,
                     suffix: CounterDownTextButton(

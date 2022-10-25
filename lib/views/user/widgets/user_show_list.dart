@@ -109,7 +109,7 @@ class UserShowListState extends State<UserShowList>
                           delegate: SliverChildBuilderDelegate(
                             (context, index) {
                               var item = artList[index];
-                              return MarketSmallCard(
+                              return UserShowCard(
                                 artData: item,
                                 onTap: () => goDetail(item),
                               );
@@ -132,32 +132,39 @@ class UserShowListState extends State<UserShowList>
   }
 }
 
-class MarketSmallCard extends StatelessWidget {
-  const MarketSmallCard({Key? key, required this.artData, this.onTap})
+class UserShowCard extends StatelessWidget {
+  const UserShowCard({Key? key, required this.artData, this.onTap})
       : super(key: key);
 
   final Art artData;
   final void Function()? onTap;
+  final double raduis = 6;
 
   @override
   Widget build(BuildContext context) {
     return Ink(
-        decoration: const BoxDecoration(
-          color: Colors.white,
-          boxShadow: kCardBoxShadow,
-        ),
+        decoration: BoxDecoration(
+            color: Colors.white,
+            boxShadow: kCardBoxShadow,
+            borderRadius: BorderRadius.circular(raduis)),
         child: InkWell(
           onTap: onTap,
           child:
               Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
             Stack(
               children: [
-                AspectRatio(
-                    aspectRatio: 1,
-                    child: Image.network(
-                      artData.cover,
-                      fit: BoxFit.cover,
-                    )),
+                ClipRRect(
+                  borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(raduis),
+                    topRight: Radius.circular(raduis),
+                  ),
+                  child: AspectRatio(
+                      aspectRatio: 1,
+                      child: Image.network(
+                        artData.cover,
+                        fit: BoxFit.cover,
+                      )),
+                ),
                 artData.serial != null
                     ? Positioned(
                         top: 8,
@@ -180,6 +187,10 @@ class MarketSmallCard extends StatelessWidget {
               width: double.infinity,
               height: 70,
               padding: const EdgeInsets.all(10),
+              decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(6!),
+                  boxShadow: kCardBoxShadow),
               child: Column(
                   mainAxisSize: MainAxisSize.min,
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -199,9 +210,9 @@ class MarketSmallCard extends StatelessWidget {
                     Text(
                       '￥${artData.price}',
                       style: const TextStyle(
-                        fontWeight: FontWeight.w500,
-                        fontSize: 15,
-                      ),
+                          fontWeight: FontWeight.w500,
+                          fontSize: 15,
+                          color: Colors.blue),
                     )
                   ]),
             ),

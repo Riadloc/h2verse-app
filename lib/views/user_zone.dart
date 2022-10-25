@@ -11,6 +11,7 @@ import 'package:h2verse_app/views/invite_friends.dart';
 import 'package:h2verse_app/views/order/orders.dart';
 import 'package:h2verse_app/views/setting.dart';
 import 'package:h2verse_app/views/user/user_show.dart';
+import 'package:h2verse_app/widgets/cached_image.dart';
 import 'package:h2verse_app/widgets/copy_field.dart';
 import 'package:h2verse_app/widgets/split_line.dart';
 import 'package:h2verse_app/widgets/tap_tile.dart';
@@ -101,8 +102,17 @@ class _UserZoneState extends State<UserZone>
                               ),
                               child: ClipRRect(
                                 borderRadius: BorderRadius.circular(80),
-                                child: Image.asset('lib/assets/avatar1.jpg',
-                                    width: 80),
+                                child: user.avatar.isNotEmpty
+                                    ? CachedImage(
+                                        user.avatar,
+                                        width: 80,
+                                        height: 80,
+                                      )
+                                    : Image.asset(
+                                        'lib/assets/avatar1.jpg',
+                                        height: 80,
+                                        width: 80,
+                                      ),
                               )))
                     ],
                   ))
@@ -135,7 +145,7 @@ class _UserZoneState extends State<UserZone>
                                     return Container();
                                   }
                                   return const Padding(
-                                    padding: EdgeInsets.only(left: 4, top: 4),
+                                    padding: EdgeInsets.only(left: 4),
                                     child: Icon(
                                       Icons.verified,
                                       color: Colors.blue,
@@ -309,11 +319,11 @@ class StaticsColumn extends StatelessWidget {
               style: const TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
             ),
             const SizedBox(
-              height: 8,
+              height: 4,
             ),
             Text(
               title,
-              style: TextStyle(fontSize: 13, color: Colors.grey.shade700),
+              style: TextStyle(fontSize: 12, color: Colors.grey.shade700),
             ),
             const SizedBox(
               height: 16,

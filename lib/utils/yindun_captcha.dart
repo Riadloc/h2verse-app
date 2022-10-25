@@ -1,49 +1,46 @@
-import 'package:flutter_net_captcha/flutter_net_captcha.dart';
+import 'package:captcha_plugin_flutter/captcha_plugin_flutter.dart';
 
 class YidunCaptcha {
-  factory YidunCaptcha() => _instance;
-  static final YidunCaptcha _instance = YidunCaptcha._internal();
+  static YidunCaptcha? _instance;
+  late CaptchaPluginFlutter _captchaPlugin;
+
   YidunCaptcha._internal() {
-    //
+    _captchaPlugin = CaptchaPluginFlutter();
+    _captchaPlugin.init({
+      "captcha_id": "7fbc4af8104c4da5b1881913248af751",
+      "is_debug": true,
+      "is_no_sense_mode": false,
+      "dimAmount": 0.8,
+      "is_touch_outside_disappear": true,
+      "timeout": 8000,
+      "is_hide_close_button": false,
+      "use_default_fallback": true,
+      "failed_max_retry_count": 4,
+      "language_type": "zh-CN",
+      "is_close_button_bottom": true,
+    });
   }
 
-  static YidunCaptcha get instance => _instance;
-
-  static void init() {
-    FlutterNetCaptcha.configVerifyCode(VerifyCodeConfig(
-      captchaId: '7fbc4af8104c4da5b1881913248af751',
-      closeButtonHidden: false,
-      shouldCloseByTouchBackground: true,
-    ));
+  factory YidunCaptcha() {
+    _instance ??= YidunCaptcha._internal();
+    return _instance!;
   }
 
-  static void show(
+  void show(
     dynamic Function(dynamic object) onSuccess,
     dynamic Function(dynamic object)? onClose,
   ) {
-    instance._show(onSuccess, onClose);
-  }
-
-  void _show(
-    dynamic Function(dynamic object) onSuccess,
-    dynamic Function(dynamic object)? onClose,
-  ) {
-    FlutterNetCaptcha.showCaptcha(
-        mode: VerifyCodeMode.Normal,
-        language: VerifyLanguage.ZH_CN,
-        onLoaded: () {
-          print('onLoaded...');
-        },
-        onVerify: (VerifyCodeResponse response) {
-          onSuccess(response);
-        },
-        onError: (String message) {
-          print(message);
-        },
-        onClose: (VerifyCodeClose close) {
-          if (onClose != null) {
-            onClose(close);
-          }
-        });
+    _captchaPlugin.showCaptcha(onLoaded: () {
+      print("================onLoaded==============");
+    }, onSuccess: (dynamic data) {
+      print(data);
+      onSuccess(data);
+    }, onClose: (dynamic data) {
+      if (onClose != null) {
+        onClose(data);
+      }
+    }, onError: (dynamic data) {
+      print(data);
+    });
   }
 }

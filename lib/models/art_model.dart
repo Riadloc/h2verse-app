@@ -29,6 +29,7 @@ class Art {
   final int? nodeIndex;
   final int? showNodes;
   final int? reservation;
+  final int? shelfTime;
   Art({
     required this.id,
     required this.cover,
@@ -55,6 +56,7 @@ class Art {
     this.nodeIndex,
     this.showNodes = 0,
     this.reservation = 0,
+    this.shelfTime,
   });
 
   Art copyWith({
@@ -83,6 +85,7 @@ class Art {
     int? nodeIndex,
     int? showNodes,
     int? reservation,
+    int? shelfTime,
   }) {
     return Art(
         id: id ?? this.id,
@@ -109,7 +112,8 @@ class Art {
         nodes: nodes ?? this.nodes,
         nodeIndex: nodeIndex ?? this.nodeIndex,
         showNodes: showNodes ?? this.showNodes,
-        reservation: reservation ?? this.reservation);
+        reservation: reservation ?? this.reservation,
+        shelfTime: shelfTime ?? this.shelfTime);
   }
 
   factory Art.empty() => Art(id: '', cover: '', name: '', price: 0);
@@ -140,7 +144,8 @@ class Art {
       'nodes': nodes?.toList(),
       'nodeIndex': nodeIndex,
       'showNodes': showNodes,
-      'reservation': reservation
+      'reservation': reservation,
+      'shelfTime': shelfTime
     };
   }
 
@@ -182,6 +187,7 @@ class Art {
       showNodes: map['showNodes'] != null ? map['showNodes'] as int : null,
       reservation:
           map['reservation'] != null ? map['reservation'] as int : null,
+      shelfTime: map['shelfTime'] != null ? map['shelfTime'] as int : null,
     );
   }
 
@@ -189,7 +195,7 @@ class Art {
 
   @override
   String toString() {
-    return 'Art(id: $id, cover: $cover, name: $name, price: $price, ownner: $ownner, copies: $copies, realCopies: $realCopies, serial: $serial, status: $status, limit: $limit, ownerUuid: $ownerUuid, description: $description, pictures: $pictures, isBox: $isBox, type: $type, level: $level, boxs: $boxs, tokenId: $tokenId, goodNo: $goodNo, count: $count, operatorStatus: $operatorStatus, nodes: $nodes, nodeIndex: $nodeIndex, showNodes: $showNodes)';
+    return 'Art(id: $id, cover: $cover, name: $name, price: $price, ownner: $ownner, copies: $copies, realCopies: $realCopies, serial: $serial, status: $status, limit: $limit, ownerUuid: $ownerUuid, description: $description, pictures: $pictures, isBox: $isBox, type: $type, level: $level, boxs: $boxs, tokenId: $tokenId, goodNo: $goodNo, count: $count, operatorStatus: $operatorStatus, nodes: $nodes, nodeIndex: $nodeIndex, showNodes: $showNodes, shelfTime: $shelfTime)';
   }
 
   @override
@@ -220,6 +226,7 @@ class Art {
         other.nodes == nodes &&
         other.nodeIndex == nodeIndex &&
         other.showNodes == showNodes &&
+        other.shelfTime == shelfTime &&
         other.reservation == reservation;
   }
 

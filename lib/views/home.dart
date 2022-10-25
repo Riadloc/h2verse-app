@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:h2verse_app/constants/theme.dart';
+import 'package:h2verse_app/utils/helper.dart';
 import 'package:h2verse_app/views/fuel/fule_list.dart';
 import 'package:lottie/lottie.dart';
 import 'package:h2verse_app/constants/constants.dart';
@@ -288,12 +289,22 @@ class ArtSmallCard extends StatelessWidget {
             },
             child:
                 Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-              AspectRatio(
-                  aspectRatio: 1.0 / 1.0,
-                  child: CachedImage(
-                    artData.cover,
-                    fit: BoxFit.cover,
-                  )),
+              Stack(
+                children: [
+                  AspectRatio(
+                      aspectRatio: 1.0 / 1.0,
+                      child: CachedImage(
+                        artData.cover,
+                        fit: BoxFit.cover,
+                      )),
+                  Positioned(
+                      top: 8,
+                      right: 8,
+                      child: Badge(
+                        artData: artData,
+                      ))
+                ],
+              ),
               Container(
                 width: double.infinity,
                 padding: const EdgeInsets.all(10),
@@ -311,19 +322,73 @@ class ArtSmallCard extends StatelessWidget {
                       ),
                       Text(
                         '${artData.ownner}',
-                        style: TextStyle(
-                            color: Theme.of(context).colorScheme.primary,
-                            height: 1.5),
+                        style:
+                            TextStyle(color: Colors.grey.shade700, height: 1.5),
                       ),
                       Text(
                         '￥${artData.price}',
                         style: const TextStyle(
-                            height: 1.5, fontWeight: FontWeight.w500),
+                            color: Colors.blue,
+                            height: 1.5,
+                            fontWeight: FontWeight.w500),
                       )
                     ]),
               )
             ]),
           )),
+    );
+  }
+}
+
+class Badge extends StatelessWidget {
+  const Badge({Key? key, required this.artData}) : super(key: key);
+
+  final Art artData;
+
+  @override
+  Widget build(BuildContext context) {
+    IconData? icon;
+    String text = '';
+    if (artData.operatorStatus == GoodOperatorStatus.OPEN) {
+      icon = Icons.whatshot;
+      text = '热卖中';
+    } else if (artData.operatorStatus == GoodOperatorStatus.SOLD_OUT) {
+      text = '已售罄';
+    } else if (artData.operatorStatus == GoodOperatorStatus.AHEAD) {
+      text = formartTimestamp(artData.shelfTime!);
+    }
+
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 3),
+      decoration: BoxDecoration(
+          color: const Color.fromRGBO(0, 0, 0, .7),
+          borderRadius: BorderRadius.circular(6),
+          boxShadow: const [
+            BoxShadow(
+              offset: Offset(0, 10),
+              blurRadius: 10,
+              spreadRadius: 0,
+              color: Color.fromRGBO(0, 0, 0, 0.5),
+            )
+          ]),
+      child: Row(
+        children: [
+          icon != null
+              ? Padding(
+                  padding: const EdgeInsets.only(right: 2),
+                  child: Icon(
+                    icon,
+                    color: Colors.white,
+                    size: 16,
+                  ),
+                )
+              : Container(),
+          Text(
+            text,
+            style: const TextStyle(color: Colors.white, fontSize: 13),
+          )
+        ],
+      ),
     );
   }
 }

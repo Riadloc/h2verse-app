@@ -97,7 +97,10 @@ class LoginInput extends StatelessWidget {
                   width: 30,
                   height: 30,
                   alignment: Alignment.center,
-                  child: Icon(icon),
+                  child: Icon(
+                    icon,
+                    size: 20,
+                  ),
                 )
               : null,
           suffixIcon: suffix,

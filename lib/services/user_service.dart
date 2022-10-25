@@ -4,6 +4,7 @@ import 'package:h2verse_app/models/address_model.dart';
 import 'package:h2verse_app/models/invitation_model.dart';
 import 'package:h2verse_app/models/real_user_info_model.dart';
 import 'package:h2verse_app/models/user_model.dart';
+import 'package:h2verse_app/models/user_short_info_model.dart';
 import 'package:h2verse_app/utils/alert.dart';
 import 'package:h2verse_app/utils/helper.dart';
 import 'package:h2verse_app/utils/http.dart';
@@ -15,7 +16,7 @@ typedef NormalResp = Map<String, dynamic>;
 
 class UserService {
   static Future<int?> sendSms(String phone, String code) async {
-    EasyLoading.show(status: 'loading');
+    EasyLoading.show(status: '机器人处理中...');
     Response response;
     response = await HttpUtils()
         .dio
@@ -86,7 +87,7 @@ class UserService {
   }
 
   static Future<RealUserInfo> getUserCertifiedInfo() async {
-    EasyLoading.show(status: 'loading');
+    EasyLoading.show(status: '机器人处理中...');
     Response response;
     response = await HttpUtils().dio.get('/user/certifiedInfo');
     EasyLoading.dismiss();
@@ -140,7 +141,7 @@ class UserService {
       {required String realName,
       required String idNo,
       required String phone}) async {
-    EasyLoading.show(status: 'loading');
+    EasyLoading.show(status: '机器人处理中...');
     var data = {'realName': realName, 'idNo': idNo, 'phone': phone};
     Response response;
     response = await HttpUtils().dio.post('/user/preCertifyV2', data: data);
@@ -162,7 +163,7 @@ class UserService {
       'realName': realName,
       'idNo': idNo
     };
-    EasyLoading.show(status: 'loading');
+    EasyLoading.show(status: '机器人处理中...');
     var reportData = await getReportParams();
     data.addAll(reportData);
     Response response;
@@ -177,7 +178,7 @@ class UserService {
   }
 
   static Future<Address?> getAddress() async {
-    EasyLoading.show(status: 'loading');
+    EasyLoading.show(status: '机器人处理中...');
     Response response;
     response = await HttpUtils().dio.get('/user/address');
     EasyLoading.dismiss();
@@ -198,7 +199,7 @@ class UserService {
       required String area,
       required String address}) async {
     var data = {'phone': phone, 'name': name, 'area': area, 'address': address};
-    EasyLoading.show(status: 'loading');
+    EasyLoading.show(status: '机器人处理中...');
     Response response;
     response = await HttpUtils().dio.post('/user/address', data: data);
     EasyLoading.dismiss();
@@ -226,7 +227,7 @@ class UserService {
   static Future getInvitations(
       {required int pageNo, required int pageSize}) async {
     var queryParameters = {'pageNo': pageNo, 'pageSize': pageSize};
-    EasyLoading.show(status: 'loading');
+    EasyLoading.show(status: '机器人处理中...');
     Response response = await HttpUtils()
         .dio
         .get('/user/invitation', queryParameters: queryParameters);
@@ -242,5 +243,20 @@ class UserService {
     }
     Alert.reqFail(response.data['msg']);
     return [0, []];
+  }
+
+  static Future<UserShortInfo?> getShortInfo({required String id}) async {
+    var queryParameters = {'id': id};
+    EasyLoading.show(status: '机器人处理中...');
+    Response response = await HttpUtils()
+        .dio
+        .get('/user/shortInfo', queryParameters: queryParameters);
+    EasyLoading.dismiss();
+    if (response.data['code'] == 0) {
+      NormalResp data = response.data['data'];
+      return UserShortInfo.fromMap(data);
+    }
+    Alert.reqFail(response.data['msg']);
+    return null;
   }
 }

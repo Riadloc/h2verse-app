@@ -11,7 +11,7 @@ class EmptyPlaceholder extends StatelessWidget {
       children: [
         Image.asset(
           'lib/assets/empty_list.png',
-          height: 200,
+          height: 160,
           fit: BoxFit.cover,
         ),
         Text(

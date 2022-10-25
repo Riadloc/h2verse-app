@@ -345,15 +345,17 @@ class _ArtDetailState extends State<ArtDetail> {
                   '${ele['value']}',
                   overflow: TextOverflow.ellipsis,
                   maxLines: 1,
-                  style: const TextStyle(fontWeight: FontWeight.w500),
+                  style: const TextStyle(
+                    fontWeight: FontWeight.w500,
+                  ),
                 ),
                 const SizedBox(
                   height: 4,
                 ),
                 Text(
                   ele['label'] as String,
-                  style:
-                      const TextStyle(color: Color.fromRGBO(141, 152, 175, 1)),
+                  style: const TextStyle(
+                      color: Color.fromRGBO(141, 152, 175, 1), fontSize: 12),
                 ),
               ],
             ),

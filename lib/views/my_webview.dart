@@ -41,7 +41,7 @@ class _MyWebviewState extends State<MyWebview> {
           initialUrl: arguments['url'],
           javascriptMode: JavascriptMode.unrestricted,
           onWebViewCreated: (controller) {
-            EasyLoading.show(status: '加载中...');
+            EasyLoading.show(status: '星球登陆中...');
           },
           onPageFinished: (url) {
             EasyLoading.dismiss();

@@ -18,7 +18,6 @@ import 'package:h2verse_app/constants/routes.dart';
 import 'package:h2verse_app/constants/theme.dart';
 import 'package:h2verse_app/providers/user_provider.dart';
 import 'package:h2verse_app/views/home_wrapper.dart';
-import 'package:h2verse_app/utils/yindun_captcha.dart';
 import 'package:h2verse_app/utils/http.dart';
 import 'package:mobpush_plugin/mobpush_plugin.dart';
 import 'package:provider/provider.dart';
@@ -36,9 +35,6 @@ void main() async {
     SystemChrome.setSystemUIOverlayStyle(style);
   }
   GoogleFonts.config.allowRuntimeFetching = false;
-  if (!kIsWeb) {
-    YidunCaptcha.init();
-  }
   HttpUtils();
   // 全局设置
   EasyRefresh.defaultHeaderBuilder = () => const ClassicHeader(

@@ -109,6 +109,7 @@ class _OrderDetailState extends State<OrderDetail> {
                         shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(4)),
                         textStyle: const TextStyle(fontSize: 16),
+                        padding: const EdgeInsets.symmetric(vertical: 12),
                         // foregroundColor: Colors.white,
                         backgroundColor: Colors.orangeAccent.shade100),
                     child: const Text('取消订单'),

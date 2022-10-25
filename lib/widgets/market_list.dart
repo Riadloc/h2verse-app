@@ -125,26 +125,34 @@ class MarketSmallCard extends StatelessWidget {
 
   final MarketItem artData;
   final void Function()? onTap;
+  final double raduis = 6;
 
   @override
   Widget build(BuildContext context) {
     return Ink(
-        decoration: const BoxDecoration(
-          color: Colors.white,
-          boxShadow: kCardBoxShadow,
-        ),
+        decoration: BoxDecoration(
+            color: Colors.white,
+            boxShadow: kCardBoxShadow,
+            borderRadius: BorderRadius.circular(raduis)),
         child: InkWell(
           onTap: onTap,
+          borderRadius: BorderRadius.circular(raduis),
           child:
               Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
             Stack(
               children: [
-                AspectRatio(
-                    aspectRatio: 1,
-                    child: Image.network(
-                      artData.cover,
-                      fit: BoxFit.cover,
-                    )),
+                ClipRRect(
+                  borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(raduis),
+                    topRight: Radius.circular(raduis),
+                  ),
+                  child: AspectRatio(
+                      aspectRatio: 1,
+                      child: Image.network(
+                        artData.cover,
+                        fit: BoxFit.cover,
+                      )),
+                ),
                 artData.serial != null
                     ? Positioned(
                         top: 8,
@@ -177,18 +185,17 @@ class MarketSmallCard extends StatelessWidget {
                       overflow: TextOverflow.ellipsis,
                       style: const TextStyle(
                           // fontWeight: FontWeight.bold,
-                          fontSize: 16,
-                          height: 1.5),
+                          fontSize: 16),
                     ),
                     const SizedBox(
-                      height: 6,
+                      height: 4,
                     ),
                     Text(
                       '￥${artData.price != 0 ? artData.price : artData.originPrice}',
                       style: const TextStyle(
-                        fontWeight: FontWeight.w500,
-                        fontSize: 15,
-                      ),
+                          fontWeight: FontWeight.w500,
+                          fontSize: 15,
+                          color: Colors.blue),
                     )
                   ]),
             ),

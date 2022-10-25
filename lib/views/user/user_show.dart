@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:h2verse_app/constants/theme.dart';
 
-import 'package:h2verse_app/models/user_model.dart';
-import 'package:h2verse_app/providers/user_provider.dart';
+import 'package:h2verse_app/models/user_short_info_model.dart';
 import 'package:h2verse_app/services/user_service.dart';
 import 'package:h2verse_app/views/user/widgets/user_show_list.dart';
-import 'package:provider/provider.dart';
 
 class UserShow extends StatefulWidget {
   const UserShow({Key? key}) : super(key: key);
@@ -28,17 +27,15 @@ class _UserShowState extends State<UserShow>
 
   final List<Tab> tabs = const <Tab>[
     Tab(text: '发行'),
-    Tab(text: '拥有'),
     Tab(text: '资讯'),
   ];
-  User user = User.empty();
+  UserShortInfo? user;
 
   void getUserInfo() {
-    UserService.getUserInfo().then((value) {
+    UserService.getShortInfo(id: params['uid']).then((value) {
       setState(() {
         user = value;
       });
-      Provider.of<UserProvider>(context, listen: false).user = value;
     });
   }
 
@@ -51,12 +48,12 @@ class _UserShowState extends State<UserShow>
     scrollController.addListener(() {
       var offset = scrollController.offset;
       int alpha = 0;
-      if (offset > 350) {
+      if (offset > 300) {
         alpha = 255;
       } else if (offset <= 0) {
         alpha = 0;
       } else {
-        alpha = offset * 255 ~/ 350;
+        alpha = offset * 255 ~/ 300;
       }
       if (alpha != titleAlpha) {
         setState(() {
@@ -76,6 +73,9 @@ class _UserShowState extends State<UserShow>
   @override
   Widget build(BuildContext context) {
     super.build(context);
+    if (user == null) {
+      return Container();
+    }
     return Scaffold(
       backgroundColor: Colors.white,
       body: NestedScrollView(
@@ -88,7 +88,7 @@ class _UserShowState extends State<UserShow>
                 pinned: true,
                 elevation: 0,
                 backgroundColor: Colors.white,
-                title: Text('氢宇宙官方',
+                title: Text(user!.nickname,
                     style:
                         TextStyle(color: Colors.black.withAlpha(titleAlpha))),
                 expandedHeight: 350,
@@ -144,39 +144,36 @@ class _UserShowState extends State<UserShow>
                       width: double.infinity,
                       alignment: Alignment.center,
                       padding: const EdgeInsets.only(top: 8),
-                      child: Column(children: [
-                        Consumer<UserProvider>(
-                            builder: (context, user, child) => Column(
-                                  children: [
-                                    Text(
-                                      user.user.nickname,
-                                      style: const TextStyle(
-                                          fontWeight: FontWeight.w500,
-                                          fontSize: 18),
-                                    ),
-                                    const SizedBox(
-                                      height: 6,
-                                    ),
-                                    Container(
-                                      padding: const EdgeInsets.symmetric(
-                                          horizontal: 20),
-                                      child: Text(
-                                        '氢宇宙H2VERSE由来自国内知名区块链研发团队和四川氢元科技有限责任公司共同发起，以H、C、O三元素为核心，致力于构建一个可以让任何玩家参与其中的元宇宙世界。',
-                                        style: TextStyle(
-                                            color: Colors.grey.shade600,
-                                            fontSize: 13),
-                                      ),
-                                    )
-                                  ],
-                                )),
-                      ]),
+                      child: Column(
+                        children: [
+                          Text(
+                            user!.nickname,
+                            style: const TextStyle(
+                                fontWeight: FontWeight.w500, fontSize: 18),
+                          ),
+                          const SizedBox(
+                            height: 6,
+                          ),
+                          Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 20),
+                            child: Text(
+                              user!.intro,
+                              style: TextStyle(
+                                  color: Colors.grey.shade600, fontSize: 13),
+                            ),
+                          )
+                        ],
+                      ),
                     ),
                   ],
                 )),
                 bottom: PreferredSize(
                     preferredSize: const Size.fromHeight(50),
                     child: Container(
-                      color: Colors.white,
+                      decoration: const BoxDecoration(
+                        boxShadow: kCardBoxShadow,
+                        color: Colors.white,
+                      ),
                       child: TabBar(
                           controller: _tabController,
                           tabs: tabs,

@@ -1,6 +1,4 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_net_captcha/flutter_net_captcha.dart';
 import 'package:get/get.dart';
 import 'package:h2verse_app/services/user_service.dart';
 import 'package:h2verse_app/utils/toast.dart';
@@ -51,8 +49,8 @@ class _TradePasswordFormState extends State<TradePasswordForm> {
       Toast.show('请输入登录密码');
       return;
     }
-    YidunCaptcha.show((object) {
-      VerifyCodeResponse resp = object;
+    YidunCaptcha().show((object) {
+      var resp = object;
       if (resp.result == true) {
         onSubmit(payKey, password);
       }
@@ -85,7 +83,7 @@ class _TradePasswordFormState extends State<TradePasswordForm> {
                 children: [
                   LoginInput(
                     hintText: '交易密码',
-                    icon: CupertinoIcons.number_circle,
+                    icon: Icons.tag,
                     type: InputType.captcha,
                     controller: payKeyController,
                   ),
@@ -94,7 +92,7 @@ class _TradePasswordFormState extends State<TradePasswordForm> {
                   ),
                   LoginInput(
                     hintText: '密码',
-                    icon: CupertinoIcons.lock_circle,
+                    icon: Icons.lock_outline,
                     type: InputType.password,
                     obscure: obscure,
                     controller: passwordController,
@@ -106,8 +104,8 @@ class _TradePasswordFormState extends State<TradePasswordForm> {
                       },
                       padding: const EdgeInsets.all(0),
                       icon: Icon(obscure
-                          ? CupertinoIcons.eye
-                          : CupertinoIcons.eye_slash),
+                          ? Icons.visibility_outlined
+                          : Icons.visibility_off_outlined),
                       iconSize: 18,
                     ),
                   ),

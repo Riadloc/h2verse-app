@@ -19,7 +19,7 @@ final OutlineInputBorder kInputFocusdBorder = OutlineInputBorder(
 const List<BoxShadow> kCardBoxShadow = [
   BoxShadow(
     offset: Offset(0, 10),
-    blurRadius: 50,
+    blurRadius: 10,
     spreadRadius: 0,
     color: Color.fromRGBO(230, 230, 230, 0.5),
   )
