@@ -91,6 +91,7 @@ class _UserShowState extends State<UserShow>
                 title: Text(user!.nickname,
                     style:
                         TextStyle(color: Colors.black.withAlpha(titleAlpha))),
+                centerTitle: false,
                 expandedHeight: 350,
                 stretch: true,
                 forceElevated: innerBoxIsScrolled,

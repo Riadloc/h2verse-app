@@ -34,7 +34,7 @@ void main() async {
         statusBarIconBrightness: Brightness.light);
     SystemChrome.setSystemUIOverlayStyle(style);
   }
-  GoogleFonts.config.allowRuntimeFetching = false;
+  // GoogleFonts.config.allowRuntimeFetching = false;
   HttpUtils();
   // 全局设置
   EasyRefresh.defaultHeaderBuilder = () => const ClassicHeader(

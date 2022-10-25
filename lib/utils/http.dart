@@ -20,7 +20,7 @@ class HttpUtils {
       // baseUrl: 'http://192.168.2.230:3000/api',
       baseUrl: kReleaseMode
           ? 'https://h5.h2verse.art/api'
-          : 'http://192.168.31.210:3000/api',
+          : 'http://192.168.2.230:3000/api',
       connectTimeout: 5000,
       validateStatus: (status) => status! >= 200 && status < 500,
     ));

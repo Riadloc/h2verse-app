@@ -4,7 +4,6 @@ import 'package:get/get.dart';
 import 'package:h2verse_app/constants/enum.dart';
 import 'package:h2verse_app/constants/theme.dart';
 import 'package:h2verse_app/models/art_model.dart';
-import 'package:h2verse_app/models/market_item_model.dart';
 import 'package:h2verse_app/services/art_service.dart';
 import 'package:h2verse_app/views/detail/art_detail.dart';
 import 'package:h2verse_app/widgets/empty_placeholder.dart';
@@ -119,7 +118,7 @@ class UserShowListState extends State<UserShowList>
                           gridDelegate:
                               SliverGridDelegateWithFixedCrossAxisCount(
                                   crossAxisCount: 2,
-                                  mainAxisSpacing: 15,
+                                  mainAxisSpacing: padding,
                                   crossAxisSpacing: padding,
                                   childAspectRatio: childAspectRatio)),
                     )
@@ -165,22 +164,6 @@ class UserShowCard extends StatelessWidget {
                         fit: BoxFit.cover,
                       )),
                 ),
-                artData.serial != null
-                    ? Positioned(
-                        top: 8,
-                        right: 8,
-                        child: Container(
-                          padding: const EdgeInsets.all(4),
-                          decoration: const ShapeDecoration(
-                              color: Color.fromRGBO(255, 255, 255, 0.8),
-                              shape: StadiumBorder()),
-                          child: Text(
-                            '#${artData.serial} / ${artData.copies}',
-                            style: const TextStyle(fontSize: 12),
-                          ),
-                        ),
-                      )
-                    : Container()
               ],
             ),
             Container(
@@ -189,7 +172,7 @@ class UserShowCard extends StatelessWidget {
               padding: const EdgeInsets.all(10),
               decoration: BoxDecoration(
                   color: Colors.white,
-                  borderRadius: BorderRadius.circular(6!),
+                  borderRadius: BorderRadius.circular(raduis),
                   boxShadow: kCardBoxShadow),
               child: Column(
                   mainAxisSize: MainAxisSize.min,
@@ -201,11 +184,10 @@ class UserShowCard extends StatelessWidget {
                       overflow: TextOverflow.ellipsis,
                       style: const TextStyle(
                           // fontWeight: FontWeight.bold,
-                          fontSize: 16,
-                          height: 1.5),
+                          fontSize: 16),
                     ),
                     const SizedBox(
-                      height: 6,
+                      height: 4,
                     ),
                     Text(
                       '￥${artData.price}',

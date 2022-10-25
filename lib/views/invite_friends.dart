@@ -87,116 +87,124 @@ class _InviteFriendsState extends State<InviteFriends> {
             ),
           ],
         ),
-        body: Center(
-          child: Padding(
-              padding: const EdgeInsets.all(20),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  RepaintBoundary(
-                    key: repainKey,
-                    child: Column(
-                      children: [
-                        Image.asset(
-                          'lib/assets/poster.webp',
-                          fit: BoxFit.fitWidth,
-                        ),
-                        Container(
-                            color: const Color.fromRGBO(51, 51, 73, 1),
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 20, vertical: 12),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Column(
-                                  mainAxisSize: MainAxisSize.min,
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: const [
-                                    Text(
-                                      '氢宇宙',
-                                      style: TextStyle(
-                                          color: Colors.white,
-                                          fontSize: 18,
-                                          fontWeight: FontWeight.w500),
+        body: ListView(
+          shrinkWrap: true,
+          children: [
+            Center(
+              child: Padding(
+                  padding:
+                      const EdgeInsets.symmetric(vertical: 20, horizontal: 40),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      RepaintBoundary(
+                        key: repainKey,
+                        child: Column(
+                          children: [
+                            Image.asset(
+                              'lib/assets/poster.webp',
+                              fit: BoxFit.fitWidth,
+                            ),
+                            Container(
+                                color: const Color.fromRGBO(51, 51, 73, 1),
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 20, vertical: 12),
+                                child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Column(
+                                      mainAxisSize: MainAxisSize.min,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: const [
+                                        Text(
+                                          '氢宇宙',
+                                          style: TextStyle(
+                                              color: Colors.white,
+                                              fontSize: 18,
+                                              fontWeight: FontWeight.w500),
+                                        ),
+                                        SizedBox(
+                                          height: 8,
+                                        ),
+                                        Text('不一样的 WEB3.0',
+                                            style: TextStyle(
+                                              color: Colors.white,
+                                            ))
+                                      ],
                                     ),
-                                    SizedBox(
-                                      height: 8,
-                                    ),
-                                    Text('不一样的 WEB3.0',
-                                        style: TextStyle(
-                                          color: Colors.white,
-                                        ))
+                                    QrImage(
+                                      data: inviteCode,
+                                      version: QrVersions.auto,
+                                      size: 66.0,
+                                      backgroundColor: Colors.white,
+                                      padding: const EdgeInsets.all(4),
+                                    )
                                   ],
+                                )),
+                          ],
+                        ),
+                      ),
+                      // const SizedBox(
+                      //   height: 16,
+                      // ),
+                      Ink(
+                        padding: const EdgeInsets.symmetric(vertical: 20),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceAround,
+                          children: [
+                            Column(
+                              children: [
+                                Ink(
+                                  decoration: const ShapeDecoration(
+                                    color: Colors.orange,
+                                    shape: CircleBorder(),
+                                  ),
+                                  child: IconButton(
+                                      onPressed: onCopy,
+                                      icon: const Icon(
+                                        Icons.link,
+                                        color: Colors.white,
+                                      )),
                                 ),
-                                QrImage(
-                                  data: inviteCode,
-                                  version: QrVersions.auto,
-                                  size: 66.0,
-                                  backgroundColor: Colors.white,
-                                  padding: const EdgeInsets.all(4),
+                                const SizedBox(
+                                  height: 8,
+                                ),
+                                const Text(
+                                  '复制链接',
                                 )
                               ],
-                            )),
-                      ],
-                    ),
-                  ),
-                  // const SizedBox(
-                  //   height: 16,
-                  // ),
-                  Ink(
-                    padding: const EdgeInsets.symmetric(vertical: 20),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceAround,
-                      children: [
-                        Column(
-                          children: [
-                            Ink(
-                              decoration: const ShapeDecoration(
-                                color: Colors.orange,
-                                shape: CircleBorder(),
-                              ),
-                              child: IconButton(
-                                  onPressed: onCopy,
-                                  icon: const Icon(
-                                    Icons.link,
-                                    color: Colors.white,
-                                  )),
                             ),
-                            const SizedBox(
-                              height: 8,
-                            ),
-                            const Text(
-                              '复制链接',
+                            Column(
+                              children: [
+                                Ink(
+                                  decoration: const ShapeDecoration(
+                                    color: Colors.green,
+                                    shape: CircleBorder(),
+                                  ),
+                                  child: IconButton(
+                                      onPressed: onShare,
+                                      icon: const Icon(
+                                        Icons.share,
+                                        color: Colors.white,
+                                      )),
+                                ),
+                                const SizedBox(
+                                  height: 8,
+                                ),
+                                const Text(
+                                  '分享',
+                                )
+                              ],
                             )
                           ],
                         ),
-                        Column(
-                          children: [
-                            Ink(
-                              decoration: const ShapeDecoration(
-                                color: Colors.green,
-                                shape: CircleBorder(),
-                              ),
-                              child: IconButton(
-                                  onPressed: onShare,
-                                  icon: const Icon(
-                                    Icons.share,
-                                    color: Colors.white,
-                                  )),
-                            ),
-                            const SizedBox(
-                              height: 8,
-                            ),
-                            const Text(
-                              '分享',
-                            )
-                          ],
-                        )
-                      ],
-                    ),
-                  )
-                ],
-              )),
+                      )
+                    ],
+                  )),
+            )
+          ],
         ));
   }
 }

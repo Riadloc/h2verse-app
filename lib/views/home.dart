@@ -87,10 +87,29 @@ class _HomeState extends State<Home> with AutomaticKeepAliveClientMixin {
           SliverAppBar(
             pinned: true,
             scrolledUnderElevation: 0,
-            title: Text(
-              'H2VERSE',
-              style: GoogleFonts.kalam(fontWeight: FontWeight.bold),
+            title: Stack(
+              alignment: Alignment.center,
+              children: [
+                Text(
+                  'H2VERSE',
+                  style: GoogleFonts.limelight(
+                      fontSize: 24,
+                      fontWeight: FontWeight.bold,
+                      foreground: Paint()
+                        ..style = PaintingStyle.stroke
+                        ..strokeWidth = 4
+                        ..color = Colors.white70),
+                ),
+                Text(
+                  'H2VERSE',
+                  style: GoogleFonts.limelight(
+                      color: Colors.black,
+                      fontSize: 24,
+                      fontWeight: FontWeight.bold),
+                ),
+              ],
             ),
+            centerTitle: false,
             backgroundColor: Colors.white,
             expandedHeight: 260,
             // actions: [
