@@ -1,10 +1,13 @@
 import 'package:dio/dio.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
+import 'package:h2verse_app/models/album_model.dart';
 import 'package:h2verse_app/models/art_model.dart';
 import 'package:h2verse_app/models/art_sns_model.dart';
 import 'package:h2verse_app/models/box_result_model.dart';
 import 'package:h2verse_app/models/compose_material_model.dart';
 import 'package:h2verse_app/models/compose_model.dart';
 import 'package:h2verse_app/models/market_item_model.dart';
+import 'package:h2verse_app/models/planet_model.dart';
 import 'package:h2verse_app/utils/http.dart';
 import 'package:h2verse_app/utils/alert.dart';
 import 'package:h2verse_app/utils/toast.dart';
@@ -33,15 +36,19 @@ class ArtService {
       {required int pageNo,
       required int type,
       required String query,
-      int? sortKey}) async {
+      int? sortKey,
+      String? albumId}) async {
     var queryParameters = {
       'pageNo': pageNo,
       'pageSize': 12,
       'type': type,
-      'keyword': query
+      'keyword': query,
     };
     if (sortKey != null) {
       queryParameters['sortKey'] = sortKey;
+    }
+    if (albumId != null && albumId.isNotEmpty) {
+      queryParameters['albumId'] = albumId;
     }
     Response response;
     response = await Future.delayed(
@@ -115,9 +122,11 @@ class ArtService {
   static Future<List<ArtSns>> getMyArtsSns(
       {required int pageNo, required String goodId}) async {
     var query = {'pageNo': pageNo, 'pageSize': 12, 'goodId': goodId};
+    EasyLoading.show(status: '机器人处理中...');
     Response response;
     response =
         await HttpUtils().dio.get('/goods/collect/sns', queryParameters: query);
+    EasyLoading.dismiss();
     if (response.data['code'] == 0) {
       NormalResp data = response.data['data'];
       return (data['list'] as List<dynamic>)
@@ -259,6 +268,48 @@ class ArtService {
     return false;
   }
 
+  static Future<List<Planet>> getPlanets({required int pageNo}) async {
+    var queryParameters = {
+      'pageNo': pageNo,
+      'pageSize': 12,
+    };
+    Response response;
+    response = await Future.delayed(
+        const Duration(milliseconds: 500),
+        () => HttpUtils()
+            .dio
+            .get('/goods/planets', queryParameters: queryParameters));
+    if (response.data['code'] == 0) {
+      NormalResp data = response.data;
+      return (data['data'] as List<dynamic>)
+          .map((e) => Planet.fromMap(e as NormalResp))
+          .toList();
+    }
+    Alert.reqFail(response.data['msg']);
+    return [];
+  }
+
+  static Future<List<Album>> getAlbums({required int pageNo}) async {
+    var queryParameters = {
+      'pageNo': pageNo,
+      'pageSize': 100,
+    };
+    Response response;
+    response = await Future.delayed(
+        const Duration(milliseconds: 500),
+        () => HttpUtils()
+            .dio
+            .get('/goods/albums', queryParameters: queryParameters));
+    if (response.data['code'] == 0) {
+      NormalResp data = response.data;
+      return (data['data'] as List<dynamic>)
+          .map((e) => Album.fromMap(e as NormalResp))
+          .toList();
+    }
+    Alert.reqFail(response.data['msg']);
+    return [];
+  }
+
   static Future<List<Art>> getUserShow(
       {required int pageNo, required int type, required String uid}) async {
     var queryParameters = {
@@ -279,7 +330,6 @@ class ArtService {
           .map((e) => Art.fromJson(e as NormalResp))
           .toList();
     }
-    print(response.data);
     Alert.reqFail(response.data['msg']);
     return [];
   }

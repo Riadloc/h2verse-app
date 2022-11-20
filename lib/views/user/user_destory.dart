@@ -36,22 +36,22 @@ class _UserDestoryState extends State<UserDestory> {
             const SizedBox(
               height: 20,
             ),
+            // Text(
+            //   '1. 请将各类钱包中的余额提出至个人银行卡，如果账号注销，余额将无法提出。',
+            //   style: textTheme.bodyLarge,
+            // ),
+            // const SizedBox(
+            //   height: 12,
+            // ),
             Text(
-              '1. 请将各类钱包中的余额提出至个人银行卡，如果账号注销，余额将无法提出。',
+              '1. 如果个人账号中持有任意藏品，均无法注销，如有无法寄售的藏品，请联系客服人员处理。',
               style: textTheme.bodyLarge,
             ),
             const SizedBox(
               height: 12,
             ),
             Text(
-              '2. 如果个人账号中持有任意藏品，均无法注销，如有无法寄售的藏品，请联系客服人员处理。',
-              style: textTheme.bodyLarge,
-            ),
-            const SizedBox(
-              height: 12,
-            ),
-            Text(
-              '3. 注销后，此账号中的订单记录无法找回，昵称、头像、钱包地址等个人信息均会删除。',
+              '2. 注销后，此账号中的订单记录无法找回，昵称、头像、区块链地址等个人信息均会删除。',
               style: textTheme.bodyLarge,
             ),
             const SizedBox(

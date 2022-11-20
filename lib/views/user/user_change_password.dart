@@ -4,7 +4,7 @@ import 'package:h2verse_app/providers/user_provider.dart';
 import 'package:h2verse_app/services/user_service.dart';
 import 'package:h2verse_app/utils/helper.dart';
 import 'package:h2verse_app/utils/toast.dart';
-import 'package:h2verse_app/utils/yindun_captcha.dart';
+import 'package:h2verse_app/utils/yidun_captcha/yidun_captcha.dart';
 import 'package:h2verse_app/views/login.dart';
 import 'package:h2verse_app/widgets/counter_down_text_button.dart';
 import 'package:h2verse_app/widgets/loading_button.dart';
@@ -32,9 +32,8 @@ class _UserChangePasswordState extends State<UserChangePassword> {
 
   void onSendSms() {
     YidunCaptcha().show((object) {
-      var resp = object;
-      if (resp.result == true) {
-        String code = resp.validate as String;
+      if (object.result) {
+        String code = object.validate as String;
         UserService.sendSms(phone, code).then((value) {
           if (value != null) {
             Toast.show(value == 0 ? '发送验证码成功' : '请稍后发送');
@@ -44,7 +43,7 @@ class _UserChangePasswordState extends State<UserChangePassword> {
           }
         });
       }
-    }, (object) => null);
+    });
   }
 
   void onSubmit() async {
@@ -119,7 +118,6 @@ class _UserChangePasswordState extends State<UserChangePassword> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
       appBar: AppBar(
         elevation: 0,
         title: const Text('修改登录密码'),
@@ -131,7 +129,7 @@ class _UserChangePasswordState extends State<UserChangePassword> {
               Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
             Center(
               child: Image.asset(
-                'lib/assets/Icons_BlueGreenGold_Planet_01.webp',
+                'assets/images/Icons_BlueGreenGold_Planet_01.webp',
                 height: 200,
                 fit: BoxFit.cover,
               ),

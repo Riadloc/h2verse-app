@@ -20,9 +20,9 @@ class _SearchHistoryState extends State<SearchHistory> {
   void initState() {
     super.initState();
     var box = Hive.box(LocalDB.BOX);
-    var _history = box.get(LocalDB.SEARCH, defaultValue: <String>[]);
+    List<dynamic> _history = box.get(LocalDB.SEARCH, defaultValue: <String>[]);
     setState(() {
-      history = _history;
+      history = _history.cast<String>();
     });
   }
 

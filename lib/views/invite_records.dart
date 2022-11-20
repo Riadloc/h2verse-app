@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:h2verse_app/models/invitation_model.dart';
 import 'package:h2verse_app/services/user_service.dart';
 import 'package:h2verse_app/utils/helper.dart';
+import 'package:h2verse_app/widgets/empty_placeholder.dart';
 
 class InviteRecords extends StatefulWidget {
   const InviteRecords({Key? key}) : super(key: key);
@@ -112,30 +113,35 @@ class _InviteRecordsState extends State<InviteRecords> {
                       ),
                     ],
                   ),
-                  ListView.separated(
-                      padding: const EdgeInsets.only(top: 12),
-                      shrinkWrap: true,
-                      itemCount: invitatedList.length,
-                      separatorBuilder: (BuildContext itemContext, int index) =>
-                          const Divider(),
-                      physics: const NeverScrollableScrollPhysics(),
-                      itemBuilder: (BuildContext itemContext, int index) {
-                        Invitation item = invitatedList[index];
-                        return Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 8),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Text(item.phone),
-                              Text(
-                                formartDate(item.createdAt),
-                                style: TextStyle(
-                                    fontSize: 13, color: Colors.grey.shade500),
+                  invitatedList.isEmpty
+                      ? ListView.separated(
+                          padding: const EdgeInsets.only(top: 12),
+                          shrinkWrap: true,
+                          itemCount: invitatedList.length,
+                          separatorBuilder:
+                              (BuildContext itemContext, int index) =>
+                                  const Divider(),
+                          physics: const NeverScrollableScrollPhysics(),
+                          itemBuilder: (BuildContext itemContext, int index) {
+                            Invitation item = invitatedList[index];
+                            return Padding(
+                              padding: const EdgeInsets.symmetric(vertical: 8),
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text(item.phone),
+                                  Text(
+                                    formartDate(item.createdAt),
+                                    style: TextStyle(
+                                        fontSize: 13,
+                                        color: Colors.grey.shade500),
+                                  ),
+                                ],
                               ),
-                            ],
-                          ),
-                        );
-                      })
+                            );
+                          })
+                      : const EmptyPlaceholder()
                 ],
               ),
             )

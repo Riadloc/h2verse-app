@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:h2verse_app/utils/helper.dart';
 
 class Modal extends StatelessWidget {
   const Modal(
@@ -7,12 +8,14 @@ class Modal extends StatelessWidget {
       required this.onConfirm,
       this.onCancel,
       this.description,
+      this.body,
       this.confirmText = '确认',
       this.cancelText = '取消'})
       : super(key: key);
 
   final String title;
   final String? description;
+  final Widget? body;
   final void Function() onConfirm;
   final void Function()? onCancel;
   final String confirmText;
@@ -22,7 +25,7 @@ class Modal extends StatelessWidget {
   Widget build(BuildContext context) {
     return Center(
         child: Container(
-      width: MediaQuery.of(context).size.width * 0.8,
+      width: getDimensions().width * 0.8,
       // height: 180,
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
@@ -47,6 +50,7 @@ class Modal extends StatelessWidget {
               description!,
               style: TextStyle(fontSize: 14, color: Colors.grey.shade500),
             ),
+          if (body != null) body!,
           const SizedBox(
             height: 18,
           ),

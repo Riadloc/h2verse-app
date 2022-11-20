@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:h2verse_app/constants/theme.dart';
+import 'package:h2verse_app/views/record/boxopen_records.dart';
 import 'package:h2verse_app/widgets/my_arts_list.dart';
 
 class UserArts extends StatefulWidget {
@@ -22,7 +23,6 @@ class _UserArtsState extends State<UserArts>
   final List<Widget> _tabs = const <Widget>[
     Tab(text: '藏品'),
     Tab(text: '盲盒'),
-    Tab(text: '权益'),
     // Tab(text: '寄售中'),
   ];
 
@@ -51,7 +51,7 @@ class _UserArtsState extends State<UserArts>
                 _currentIndex == 1
                     ? TextButton(
                         onPressed: () {
-                          //
+                          Get.toNamed(BoxOpenRecords.routeName);
                         },
                         child: const Text(
                           '开盒记录',

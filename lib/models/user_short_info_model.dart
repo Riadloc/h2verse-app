@@ -7,6 +7,7 @@ class UserShortInfo {
   final int userId;
   final String intro;
   final String avatar;
+  final String background;
   final String chainAccount;
   UserShortInfo({
     required this.id,
@@ -14,6 +15,7 @@ class UserShortInfo {
     required this.userId,
     required this.intro,
     required this.avatar,
+    required this.background,
     required this.chainAccount,
   });
 
@@ -23,6 +25,7 @@ class UserShortInfo {
     int? userId,
     String? intro,
     String? avatar,
+    String? background,
     String? chainAccount,
   }) {
     return UserShortInfo(
@@ -31,6 +34,7 @@ class UserShortInfo {
       userId: userId ?? this.userId,
       intro: intro ?? this.intro,
       avatar: avatar ?? this.avatar,
+      background: background ?? this.background,
       chainAccount: chainAccount ?? this.chainAccount,
     );
   }
@@ -42,6 +46,7 @@ class UserShortInfo {
       'userId': userId,
       'intro': intro,
       'avatar': avatar,
+      'background': background,
       'chainAccount': chainAccount,
     };
   }
@@ -53,6 +58,7 @@ class UserShortInfo {
       userId: map['userId'] as int,
       intro: map['intro'] as String,
       avatar: map['avatar'] as String,
+      background: map['background'] as String,
       chainAccount: map['chainAccount'] as String,
     );
   }
@@ -64,7 +70,7 @@ class UserShortInfo {
 
   @override
   String toString() {
-    return 'UserShortInfo(id: $id, nickname: $nickname, userId: $userId, intro: $intro, avatar: $avatar, chainAccount: $chainAccount)';
+    return 'UserShortInfo(id: $id, nickname: $nickname, userId: $userId, intro: $intro, avatar: $avatar, background: $background, chainAccount: $chainAccount)';
   }
 
   @override
@@ -76,6 +82,7 @@ class UserShortInfo {
         other.userId == userId &&
         other.intro == intro &&
         other.avatar == avatar &&
+        other.background == background &&
         other.chainAccount == chainAccount;
   }
 
@@ -86,6 +93,7 @@ class UserShortInfo {
         userId.hashCode ^
         intro.hashCode ^
         avatar.hashCode ^
+        background.hashCode ^
         chainAccount.hashCode;
   }
 }

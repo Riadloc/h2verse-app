@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:shimmer/shimmer.dart';
 
 class LoadingScreen extends StatefulWidget {
@@ -24,16 +25,17 @@ class _LoadingScreenState extends State<LoadingScreen> {
       appBar: AppBar(
         elevation: 0,
         backgroundColor: bgColor,
+        toolbarHeight: 0,
       ),
       body: Center(
         child: Shimmer.fromColors(
           baseColor: Colors.black38,
           highlightColor: Colors.white,
-          child: const Text(
-            '氢宇宙',
-            style: TextStyle(
-              fontSize: 70.0,
-              fontWeight: FontWeight.bold,
+          child: Text(
+            'H2VERSE',
+            style: GoogleFonts.limelight(
+              fontSize: 50.0,
+              fontWeight: FontWeight.w300,
             ),
           ),
         ),

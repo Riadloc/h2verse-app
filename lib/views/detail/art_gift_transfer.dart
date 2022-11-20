@@ -112,7 +112,6 @@ class _ArtGiftTransferState extends State<ArtGiftTransfer> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
       appBar: AppBar(
         elevation: 1,
         backgroundColor: Colors.white,

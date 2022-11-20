@@ -9,7 +9,7 @@ class WalletService {
   static Future<List<BankCard>> getBankList() async {
     EasyLoading.show(status: '机器人处理中...');
     Response response;
-    response = await HttpUtils().dio.get('/wallet/bankList');
+    response = await HttpUtils().dio.get('/user/bankList');
     EasyLoading.dismiss();
     if (response.data['code'] == 0) {
       List<dynamic> data = response.data['data'] ?? [];
@@ -64,7 +64,7 @@ class WalletService {
       'bankCode': bankCode,
     };
     Response response =
-        await HttpUtils().dio.post('/wallet/bank/bind', data: data);
+        await HttpUtils().dio.post('/user/bank/bind', data: data);
     if (response.data['code'] == 0) {
       return true;
     }

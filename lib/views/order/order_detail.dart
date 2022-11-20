@@ -1,4 +1,6 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:get/get.dart';
 import 'package:h2verse_app/constants/constants.dart';
 import 'package:h2verse_app/models/order_model.dart';
@@ -10,7 +12,8 @@ import 'package:h2verse_app/widgets/common_field_card.dart';
 import 'package:h2verse_app/widgets/copy_field.dart';
 import 'package:h2verse_app/widgets/loading_button.dart';
 import 'package:h2verse_app/widgets/modal.dart';
-import 'package:h2verse_app/widgets/otp_modal.dart';
+import 'package:tobias/tobias.dart';
+import 'package:url_launcher/url_launcher_string.dart';
 
 class OrderDetail extends StatefulWidget {
   const OrderDetail({Key? key}) : super(key: key);
@@ -93,11 +96,11 @@ class _OrderDetailState extends State<OrderDetail> {
                                 orderNo: orderInfo.orderNo);
                             if (res) {
                               Toast.show('订单已取消');
+                              Get.back(closeOverlays: true, result: true);
                             }
                             setState(() {
                               loading = false;
                             });
-                            Get.back(closeOverlays: true);
                           },
                           onCancel: () {
                             Get.back(canPop: false);
@@ -106,49 +109,92 @@ class _OrderDetailState extends State<OrderDetail> {
                       );
                     },
                     style: ElevatedButton.styleFrom(
+                        elevation: 0,
                         shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(4)),
                         textStyle: const TextStyle(fontSize: 16),
                         padding: const EdgeInsets.symmetric(vertical: 12),
-                        // foregroundColor: Colors.white,
-                        backgroundColor: Colors.orangeAccent.shade100),
+                        foregroundColor: Colors.white,
+                        backgroundColor: Colors.red),
                     child: const Text('取消订单'),
                   ),
                 ),
               ),
-              // const SizedBox(
-              //   width: padding,
-              // ),
-              // Expanded(
-              //     child: ElevatedButton(
-              //   onPressed: () {
-              //     Get.bottomSheet(
-              //       OptModal(
-              //         onPress: (pin) async {
-              //           bool isSuccess = await OrderService.doTrade(
-              //               orderId: orderId, payKey: pin);
-              //           if (isSuccess) {
-              //             Get.dialog(Modal(
-              //                 title: '购买结果',
-              //                 description: '购买成功，可以在【我的藏品】进行查看',
-              //                 confirmText: '返回',
-              //                 onConfirm: () {
-              //                   Get.back(canPop: true, closeOverlays: true);
-              //                 }));
-              //           }
-              //         },
-              //       ),
-              //       enableDrag: false,
-              //       isDismissible: false,
-              //     );
-              //   },
-              //   style: ElevatedButton.styleFrom(
-              //       shape: RoundedRectangleBorder(
-              //           borderRadius: BorderRadius.circular(4)),
-              //       textStyle: const TextStyle(fontSize: 16),
-              //       foregroundColor: Colors.white),
-              //   child: const Text('继续支付'),
-              // ))
+              const SizedBox(
+                width: padding,
+              ),
+              Expanded(
+                  child: ElevatedButton(
+                onPressed: () async {
+                  if (orderInfo.url != null) {
+                    success() => {
+                          Get.dialog(Modal(
+                              title: '支付结果',
+                              description: '支付成功，藏品已转入您的仓库，可以在【我的藏品】进行查看',
+                              confirmText: '确定',
+                              onConfirm: () async {
+                                Get.back(closeOverlays: false);
+                                EasyLoading.show();
+                                await Future.delayed(
+                                    const Duration(seconds: 1));
+                                EasyLoading.dismiss();
+                                setState(() {
+                                  getDetail =
+                                      OrderService.getDetail(orderId: orderId);
+                                });
+                              }))
+                        };
+                    if (orderInfo.url!.startsWith('https')) {
+                      if (kIsWeb) {
+                        launchUrlString(orderInfo.url!);
+                      } else {
+                        launchUrlString(orderInfo.url!,
+                            mode: LaunchMode.externalApplication);
+                      }
+                      Future.delayed(const Duration(seconds: 1), () {
+                        Get.dialog(Modal(
+                          title: '支付',
+                          description: '已完成支付',
+                          cancelText: '未支付',
+                          confirmText: '已支付',
+                          onConfirm: () {
+                            Get.back(closeOverlays: false);
+                            success();
+                          },
+                          onCancel: () {
+                            Get.back(closeOverlays: false);
+                          },
+                        ));
+                      });
+                    } else {
+                      if (kIsWeb) {
+                        Toast.show('请在App端操作继续支付');
+                      } else {
+                        var payResult = await aliPay(orderInfo.url!);
+                        if (payResult['resultStatus'] == '9000' &&
+                            payResult['result'] != '') {
+                          success();
+                          return;
+                        }
+                        Toast.show(payResult['memo'] != ''
+                            ? payResult['memo']
+                            : '支付未完成');
+                      }
+                    }
+                  } else {
+                    Toast.show('通过银行卡快捷支付方式支付的订单无法继续支付，请取消后重新发起订单');
+                  }
+                },
+                style: ElevatedButton.styleFrom(
+                  elevation: 0,
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(4)),
+                  textStyle: const TextStyle(fontSize: 16),
+                  padding: const EdgeInsets.symmetric(vertical: 12),
+                  foregroundColor: Colors.white,
+                ),
+                child: const Text('继续支付'),
+              ))
             ],
           ));
     }

@@ -8,8 +8,16 @@ import 'package:h2verse_app/views/community/groups.dart';
 import 'package:h2verse_app/views/compose/compose_lab.dart';
 import 'package:h2verse_app/views/compose/compose_list.dart';
 import 'package:h2verse_app/views/detail/art_gift_transfer.dart';
+import 'package:h2verse_app/views/detail/art_power_consume.dart';
+import 'package:h2verse_app/views/detail/art_power.dart';
+import 'package:h2verse_app/views/detail/art_power_records.dart';
 import 'package:h2verse_app/views/fuel/fule_list.dart';
-import 'package:h2verse_app/views/my_webview.dart';
+import 'package:h2verse_app/views/market.dart';
+import 'package:h2verse_app/views/openauth.dart';
+import 'package:h2verse_app/views/other/activity.dart';
+import 'package:h2verse_app/views/other/app_download.dart';
+import 'package:h2verse_app/views/record/boxopen_records.dart';
+import 'package:h2verse_app/views/webview/my_webview.dart';
 import 'package:h2verse_app/views/acount/account_manage.dart';
 import 'package:h2verse_app/views/acount/bankcard_bind_form.dart';
 import 'package:h2verse_app/views/bulletin/bulletin.dart';
@@ -50,6 +58,7 @@ Map<String, Widget Function(BuildContext)> routes = {
   SearchScreen.routeName: (context) => const SearchScreen(),
   Orders.routeName: (context) => const Orders(),
   UserArts.routeName: (context) => const UserArts(),
+  Market.routeName: (context) => const Market(),
   ArtDetail.routeName: (context) => const ArtDetail(),
   Wallet.routeName: (context) => const Wallet(),
   UserEdit.routeName: (context) => const UserEdit(),
@@ -81,4 +90,11 @@ Map<String, Widget Function(BuildContext)> routes = {
   CustomerService.routeName: (context) => const CustomerService(),
   About.routeName: (context) => const About(),
   UserShow.routeName: (context) => const UserShow(),
+  OpenAuth.routeName: (context) => const OpenAuth(),
+  AppDownload.routeName: (context) => const AppDownload(),
+  ArtPower.routeName: (context) => const ArtPower(),
+  ArtPowerConsume.routeName: (context) => const ArtPowerConsume(),
+  ArtPowerRecords.routeName: (context) => const ArtPowerRecords(),
+  Activity.routeName: (context) => const Activity(),
+  BoxOpenRecords.routeName: (context) => const BoxOpenRecords(),
 };

@@ -46,7 +46,7 @@ class ArtChainInfo extends StatelessWidget {
                 Container(
                   color: Colors.black,
                   child: Image.asset(
-                    'lib/assets/bsn.png',
+                    'assets/images/bsn.png',
                     height: 30,
                     fit: BoxFit.fitHeight,
                   ),

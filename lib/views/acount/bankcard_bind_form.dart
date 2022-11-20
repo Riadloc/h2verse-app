@@ -41,7 +41,6 @@ class _BankCardBindFormState extends State<BankCardBindForm> {
 
   void getInfo() async {
     RealUserInfo realUserInfo = await UserService.getUserCertifiedInfo();
-    print(realUserInfo.realName);
     if (realUserInfo.realName.isNotEmpty) {
       nameController.text = realUserInfo.realName;
       idNoController.text = realUserInfo.idNo;

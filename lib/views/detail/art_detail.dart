@@ -1,4 +1,6 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:get/get.dart';
 import 'package:h2verse_app/constants/constants.dart';
 import 'package:h2verse_app/constants/theme.dart';
@@ -6,9 +8,13 @@ import 'package:h2verse_app/models/art_model.dart';
 import 'package:h2verse_app/models/box_result_model.dart';
 import 'package:h2verse_app/providers/user_provider.dart';
 import 'package:h2verse_app/services/art_service.dart';
+import 'package:h2verse_app/utils/event_bus.dart';
+import 'package:h2verse_app/utils/events.dart';
 import 'package:h2verse_app/utils/helper.dart';
 import 'package:h2verse_app/utils/toast.dart';
 import 'package:h2verse_app/views/detail/art_gift_transfer.dart';
+import 'package:h2verse_app/views/detail/art_power_consume.dart';
+import 'package:h2verse_app/views/detail/art_power.dart';
 import 'package:h2verse_app/views/identity.dart';
 
 import 'package:h2verse_app/constants/enum.dart';
@@ -26,6 +32,7 @@ import 'package:h2verse_app/widgets/tap_tile.dart';
 import 'package:intl/intl.dart';
 import 'package:lottie/lottie.dart';
 import 'package:provider/provider.dart';
+import 'package:swipeable_button_view/swipeable_button_view.dart';
 import 'package:timer_count_down/timer_count_down.dart';
 
 class ArtDetail extends StatefulWidget {
@@ -64,34 +71,47 @@ class _ArtDetailState extends State<ArtDetail> {
             seconds: duration,
             build: (BuildContext context, double time) => Text(
               textAlign: TextAlign.center,
-              DateFormat('HH时mm分ss秒').format(
+              DateFormat('HH时mm分ss秒 开售').format(
                   DateTime.fromMillisecondsSinceEpoch((time * 1000).toInt(),
                       isUtc: true)),
               style: const TextStyle(fontSize: 16),
             ),
             interval: const Duration(seconds: 1),
             onFinished: () {
-              duration = 0;
+              setState(() {
+                duration = 0;
+                status = GoodOperatorStatus.OPEN;
+              });
             },
           );
           return Container(
-            padding: const EdgeInsets.symmetric(vertical: 13, horizontal: 18),
-            decoration: BoxDecoration(
-                color: Colors.grey.shade300,
-                borderRadius: BorderRadius.circular(8),
-                boxShadow: kCardBoxShadow),
+            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
             child: Row(
               mainAxisSize: MainAxisSize.min,
-              mainAxisAlignment: MainAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                const Icon(
-                  Icons.add_shopping_cart,
-                  size: 16,
+                Padding(
+                  padding: const EdgeInsets.only(right: 20),
+                  child: Text(
+                    '${data.price} RMB',
+                    style: const TextStyle(
+                        fontWeight: FontWeight.bold, fontSize: 20),
+                  ),
                 ),
-                const SizedBox(
-                  width: 4,
-                ),
-                countdown
+                Expanded(
+                    child: Container(
+                  padding:
+                      const EdgeInsets.symmetric(vertical: 13, horizontal: 18),
+                  decoration: BoxDecoration(
+                      color: Colors.grey.shade300,
+                      borderRadius: BorderRadius.circular(8),
+                      boxShadow: kCardBoxShadow),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [countdown],
+                  ),
+                ))
               ],
             ),
           );
@@ -129,24 +149,6 @@ class _ArtDetailState extends State<ArtDetail> {
       case GoodOperatorStatus.OPEN:
         {
           onPressed = () {
-            if (state.user.certified == 0) {
-              Get.dialog(
-                Modal(
-                  title: '还没完成实名认证！',
-                  description: '需要完成实名认证后才可以进行购买',
-                  confirmText: '前去认证',
-                  onConfirm: () {
-                    Get.back();
-                    Get.toNamed(Identity.routeName);
-                  },
-                  onCancel: () {
-                    Get.back();
-                  },
-                ),
-                barrierDismissible: true,
-              );
-              return;
-            }
             Get.toNamed(OrderForm.routeName, arguments: data);
           };
           btnText = '立即购买';
@@ -155,7 +157,6 @@ class _ArtDetailState extends State<ArtDetail> {
         }
       case GoodOperatorStatus.SOLD_OUT:
         {
-          // onPressed = () => () => Toast.show('已售罄');
           btnText = '已售罄';
           break;
         }
@@ -170,82 +171,155 @@ class _ArtDetailState extends State<ArtDetail> {
         }
       case GoodOperatorStatus.SHELVED:
         {
-          // onPressed = () {
-          //   Get.dialog(
-          //     Modal(
-          //       title: '确认取消寄售该藏品？',
-          //       onConfirm: () async {
-          //         Get.back(canPop: false);
-          //         var res = await ArtService.putOffMarket(goodId: data.id);
-          //         if (res) {
-          //           // Get.offNamed(ArtDetail.routeName, arguments: params);
-          //         }
-          //       },
-          //       onCancel: () {
-          //         Get.back(canPop: false);
-          //       },
-          //     ),
-          //   );
-          // };
           btnText = '取消寄售';
           break;
         }
       case GoodOperatorStatus.UNSHELVE:
         {
-          // onPressed = () {
-          //   Get.bottomSheet(ArtPutOnForm(
-          //     title: data.name,
-          //     boughtPrice: data.price,
-          //     onPress: (price) async {
-          //       //
-          //     },
-          //   ));
-          // };
           btnText = '立即寄售';
           break;
         }
       case GoodOperatorStatus.UNOPEN_BOX:
         {
-          onPressed = () async {
-            Get.dialog(Center(
-              child: Lottie.asset(
-                'lib/assets/lottie/present-for-you.json',
-                width: 500,
-                fit: BoxFit.fill,
-              ),
-            ));
-            BoxResult? boxResult = await ArtService.postOpenboxOne(id: data.id);
-            Get.back(closeOverlays: false);
-            if (boxResult != null) {
-              Get.dialog(Modal(
-                  title: '盲盒开启',
-                  description:
-                      '恭喜您开到了：${boxResult.data.name}x${boxResult.count} !',
-                  onConfirm: () {
-                    Get.back(closeOverlays: true);
-                  }));
-            }
-          };
           btnText = '立即开盒';
-          break;
+          return Container(
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+              child: SwipeableButtonView(
+                  buttonText: '滑动开盒',
+                  buttonColor: Colors.blue,
+                  indicatorColor:
+                      const AlwaysStoppedAnimation<Color>(Colors.blue),
+                  buttontextstyle: const TextStyle(
+                      color: Colors.blue, fontWeight: FontWeight.bold),
+                  buttonWidget: const Icon(
+                    Icons.double_arrow_rounded,
+                    color: Colors.white,
+                  ),
+                  activeColor: Colors.grey.shade100,
+                  isFinished: btnLoading,
+                  onWaitingProcess: () {
+                    setState(() {
+                      btnLoading = true;
+                    });
+                  },
+                  onFinish: () async {
+                    if (kIsWeb) {
+                      EasyLoading.show(status: '开盒中...');
+                    } else {
+                      Get.dialog(
+                          useSafeArea: false,
+                          Center(
+                            child: Lottie.asset(
+                              'assets/lottie/present-for-you.json',
+                              width: 500,
+                              fit: BoxFit.fill,
+                            ),
+                          ),
+                          barrierColor: Colors.white);
+                    }
+                    BoxResult? boxResult =
+                        await ArtService.postOpenboxOne(id: data.id);
+                    await Future.delayed(const Duration(milliseconds: 2000));
+                    if (kIsWeb) {
+                      EasyLoading.dismiss();
+                    } else {
+                      Get.back(closeOverlays: false);
+                    }
+                    setState(() {
+                      btnLoading = false;
+                    });
+                    if (boxResult != null) {
+                      eventBus.fire(RefreshEvent());
+                      Get.dialog(Modal(
+                        title: '',
+                        body: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            const SizedBox(
+                              height: 8,
+                            ),
+                            CachedImage(
+                              boxResult.data.cover,
+                              width: 100,
+                              height: 100,
+                              fit: BoxFit.fitWidth,
+                            ),
+                            const SizedBox(
+                              height: 12,
+                            ),
+                            // ${boxResult.data.name}
+                            Text.rich(TextSpan(
+                                text: '恭喜您开到了：',
+                                style: const TextStyle(fontSize: 15),
+                                children: [
+                                  TextSpan(
+                                      text: boxResult.data.name,
+                                      style: const TextStyle(
+                                          fontWeight: FontWeight.bold)),
+                                  const TextSpan(text: '！')
+                                ]))
+                          ],
+                        ),
+                        confirmText: '查看',
+                        cancelText: '返回',
+                        onConfirm: () {
+                          Get.back(closeOverlays: false);
+                          Get.offAndToNamed(ArtDetail.routeName, arguments: {
+                            'goodId': boxResult.data.id,
+                            'artType': ArtType.second,
+                            'cover': boxResult.data.cover,
+                          });
+                        },
+                        onCancel: () {
+                          Get.back(closeOverlays: true);
+                        },
+                      ));
+                    }
+                  }));
         }
       default:
         {
-          btnText = '查看';
-          break;
+          btnText = '';
+          Future.delayed(const Duration(milliseconds: 100), () {
+            setState(() {
+              status = 999;
+            });
+          });
+          return Container();
         }
     }
-    return GradientButton(
-        loading: btnLoading,
-        text: btnText,
-        onPressed: onPressed,
-        borderRadius: 8,
-        style: ElevatedButton.styleFrom(
-          elevation: 1,
-          padding: const EdgeInsets.symmetric(vertical: 13, horizontal: 18),
-          textStyle: const TextStyle(fontSize: 16),
-        ),
-        colors: colors);
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          params['artType'] != ArtType.second
+              ? Padding(
+                  padding: const EdgeInsets.only(right: 20),
+                  child: Text(
+                    '${data.price} RMB',
+                    style: const TextStyle(
+                        fontWeight: FontWeight.bold, fontSize: 20),
+                  ),
+                )
+              : const SizedBox(),
+          Expanded(
+              child: GradientButton(
+                  loading: btnLoading,
+                  text: btnText,
+                  onPressed: onPressed,
+                  borderRadius: 8,
+                  style: ElevatedButton.styleFrom(
+                    elevation: 1,
+                    padding: const EdgeInsets.symmetric(
+                        vertical: 13, horizontal: 18),
+                    textStyle: const TextStyle(fontSize: 16),
+                  ),
+                  colors: colors))
+        ],
+      ),
+    );
   }
 
   Widget buildTopStepper(Art data) {
@@ -315,7 +389,7 @@ class _ArtDetailState extends State<ArtDetail> {
           Get.toNamed(UserShow.routeName, arguments: {"uid": data.ownerUuid});
         }
       },
-      {'label': '拥有者', 'value': data.ownner},
+      // {'label': '拥有者', 'value': data.ownner},
       {'label': '发行', 'value': data.copies},
     ];
     if (data.operatorStatus == GoodOperatorStatus.SOLD_OUT) {
@@ -329,8 +403,10 @@ class _ArtDetailState extends State<ArtDetail> {
         {'label': '预约', 'value': data.reservation ?? 0},
       );
     }
-    if (params['artType'] == ArtType.main) {
-      list.removeAt(1);
+    if (params['artType'] == ArtType.second) {
+      list.add(
+        {'label': '发行价', 'value': '￥${data.price}'},
+      );
     }
     List<Widget> widgets = [];
     for (var i = 0; i < list.length; i++) {
@@ -440,13 +516,14 @@ class _ArtDetailState extends State<ArtDetail> {
                             Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Text(
+                                SelectionArea(
+                                    child: Text(
                                   '${detailData.name}${detailData.serial != null ? ' #${detailData.serial}' : ''}',
                                   style: const TextStyle(
                                       fontWeight: FontWeight.bold,
                                       fontSize: 18,
                                       height: 1.5),
-                                ),
+                                )),
                                 detailData.description == null ||
                                         detailData.description == ''
                                     ? Container()
@@ -482,6 +559,17 @@ class _ArtDetailState extends State<ArtDetail> {
                           ],
                         ),
                       ),
+                      // Container(
+                      //   padding: const EdgeInsets.symmetric(
+                      //       horizontal: 20, vertical: 8),
+                      //   decoration: const BoxDecoration(
+                      //       color: Color.fromRGBO(251, 250, 251, 1),
+                      //       boxShadow: kCardBoxShadow),
+                      //   child: Text(
+                      //     '购买数字作品须知',
+                      //     style: TextStyle(color: Colors.grey.shade700),
+                      //   ),
+                      // ),
                       detailData.pictures!.isNotEmpty
                           ? Container(
                               padding: const EdgeInsets.all(20),
@@ -505,6 +593,20 @@ class _ArtDetailState extends State<ArtDetail> {
                       const SizedBox(
                         height: 12,
                       ),
+                      if (params['artType'] != ArtType.main &&
+                          detailData.powerId != null) ...[
+                        TapTile(
+                            title: '查看权益',
+                            onTap: () {
+                              Get.toNamed(ArtPower.routeName,
+                                  arguments: {'goodId': detailData.id});
+                            }),
+                        const Divider(
+                          indent: 10,
+                          endIndent: 10,
+                          height: 1,
+                        ),
+                      ],
                       TapTile(
                           title: '上链信息',
                           onTap: () {
@@ -524,6 +626,7 @@ class _ArtDetailState extends State<ArtDetail> {
                               'query': detailData.name
                             });
                           }),
+
                       const SizedBox(
                         height: 12,
                       ),
@@ -546,51 +649,38 @@ class _ArtDetailState extends State<ArtDetail> {
                             ),
                             Text(
                                 '氢宇宙中的数字藏品是虚拟数字商品，而非实物商品，仅限实名认证为年满18周岁的中国大陆用户购买。因数字藏品的特殊性，一经购买成功，将不支持退换。数字藏品的知识产权或其他权益属发行方或权利人所有，除另行取得发行方或权利人授权外，您不得将数字藏品用于任何商业用途。请勿对数字藏品进行炒作、场外交易或任何非法方式进行使用。',
-                                style: TextStyle(color: descriptionColor))
+                                style: TextStyle(
+                                  color: descriptionColor,
+                                ))
                           ],
                         ),
                       ),
                       const SizedBox(
                         height: 12,
                       ),
-                      if (params['artType'] != ArtType.main) ...[
-                        TapTile(
-                            title: '流转历史',
-                            onTap: () {
-                              //
-                            }),
-                        const SizedBox(
-                          height: 12,
-                        ),
-                      ]
+                      // if (params['artType'] != ArtType.main) ...[
+                      //   TapTile(
+                      //       title: '流转历史',
+                      //       onTap: () {
+                      //         //
+                      //       }),
+                      //   const SizedBox(
+                      //     height: 12,
+                      //   ),
+                      // ]
                     ],
                   )),
-              bottomNavigationBar: BottomAppBar(
-                child: Container(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.only(right: 20),
-                        child: Text(
-                          '${detailData.price} RMB',
-                          style: const TextStyle(
-                              fontWeight: FontWeight.bold, fontSize: 20),
-                        ),
-                      ),
-                      Expanded(
-                          child: Consumer<UserProvider>(
+              bottomNavigationBar: status != 999
+                  ? BottomAppBar(
+                      elevation: 5,
+                      child: Consumer<UserProvider>(
                         builder: (context, value, child) => bottomButtonBuilder(
                           value,
                           detailData,
                         ),
-                      ))
-                    ],
-                  ),
-                ),
-              ));
+                      ),
+                    )
+                  : null);
         }
         return Container();
       },

@@ -10,7 +10,7 @@ class EmptyPlaceholder extends StatelessWidget {
     return Column(
       children: [
         Image.asset(
-          'lib/assets/empty_list.png',
+          'assets/images/empty_list.png',
           height: 160,
           fit: BoxFit.cover,
         ),

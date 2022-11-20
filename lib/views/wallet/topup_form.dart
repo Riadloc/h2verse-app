@@ -88,7 +88,7 @@ class _TopupFormState extends State<TopupForm> {
                         child: ClipRRect(
                           borderRadius: BorderRadius.circular(8),
                           child: Image.asset(
-                            'lib/assets/value_cards/$amount.jpg',
+                            'assets/images/value_cards/$amount.jpg',
                             height: 100,
                           ),
                         )),

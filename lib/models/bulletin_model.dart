@@ -1,32 +1,32 @@
 class Bulletin {
   Bulletin({
     required this.id,
-    required this.title,
-    required this.publishedAt,
-    required this.slug,
+    required this.name,
+    required this.createdAt,
+    required this.url,
     this.cover,
   });
-  late final int id;
-  late final String title;
-  late final String publishedAt;
+  late final String id;
+  late final String name;
+  late final String createdAt;
   late final String? cover;
-  late final String slug;
+  late final String url;
 
   Bulletin.fromJson(Map<String, dynamic> json) {
     id = json['id'];
-    title = json['title'];
-    publishedAt = json['published_at'];
+    name = json['name'];
+    createdAt = json['createdAt'];
     cover = json['cover'];
-    slug = json['slug'];
+    url = json['url'];
   }
 
   Map<String, dynamic> toJson() {
     final _data = <String, dynamic>{};
     _data['id'] = id;
-    _data['title'] = title;
-    _data['published_at'] = publishedAt;
+    _data['name'] = name;
+    _data['createdAt'] = createdAt;
     _data['cover'] = cover;
-    _data['slug'] = slug;
+    _data['url'] = url;
     return _data;
   }
 }

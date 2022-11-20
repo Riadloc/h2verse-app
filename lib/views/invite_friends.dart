@@ -1,11 +1,13 @@
 import 'dart:io';
 import 'dart:ui';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:get/get.dart';
 import 'package:h2verse_app/providers/user_provider.dart';
+import 'package:h2verse_app/views/login.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:h2verse_app/utils/toast.dart';
 import 'package:h2verse_app/views/invite_records.dart';
@@ -25,13 +27,15 @@ class InviteFriends extends StatefulWidget {
 
 class _InviteFriendsState extends State<InviteFriends> {
   GlobalKey repainKey = GlobalKey();
-  String inviteCode = '';
+  String inviteLink = '';
 
   Future<void> onShare() async {
-    var status = await Permission.storage.status;
-    if (!status.isGranted) {
-      status = await Permission.storage.request();
-      return;
+    if (!kIsWeb) {
+      var status = await Permission.storage.status;
+      if (!status.isGranted) {
+        status = await Permission.storage.request();
+        return;
+      }
     }
     EasyLoading.show(status: '准备中');
     try {
@@ -40,22 +44,26 @@ class _InviteFriendsState extends State<InviteFriends> {
       var image = await boundary.toImage(pixelRatio: 5.0);
       ByteData? finalByteData =
           await image.toByteData(format: ImageByteFormat.png);
-      Directory tempDir = await getTemporaryDirectory();
-      String tempPath = tempDir.path;
-      final dir = Directory('$tempPath/氢宇宙海报.png');
-      final imageFile = File(dir.path);
-      await imageFile.writeAsBytes(finalByteData!.buffer.asUint8List());
-      Share.shareFiles([imageFile.path]);
+      if (kIsWeb) {
+        Share.shareXFiles(
+            [XFile.fromData(finalByteData!.buffer.asUint8List())]);
+      } else {
+        Directory tempDir = await getTemporaryDirectory();
+        String tempPath = tempDir.path;
+        final dir = Directory('$tempPath/氢宇宙海报.png');
+        final imageFile = File(dir.path);
+        await imageFile.writeAsBytes(finalByteData!.buffer.asUint8List());
+        Share.shareFiles([imageFile.path]);
+      }
     } catch (err) {
-      //
+      print(err);
     } finally {
       EasyLoading.dismiss();
     }
   }
 
   void onCopy() {
-    Clipboard.setData(
-        ClipboardData(text: 'https://h5.h2verse.art/index?code=$inviteCode'));
+    Clipboard.setData(ClipboardData(text: inviteLink));
     Toast.show('复制成功！');
   }
 
@@ -63,7 +71,62 @@ class _InviteFriendsState extends State<InviteFriends> {
   void initState() {
     super.initState();
     var user = Provider.of<UserProvider>(context, listen: false).user;
-    inviteCode = '${user.userId}';
+    inviteLink = 'https://h5.h2verse.art/index?code=${user.userId}';
+  }
+
+  Widget buildButtons() {
+    var buttons = [
+      Column(
+        children: [
+          Ink(
+            decoration: const ShapeDecoration(
+              color: Colors.orange,
+              shape: CircleBorder(),
+            ),
+            child: IconButton(
+                onPressed: onCopy,
+                icon: const Icon(
+                  Icons.link,
+                  color: Colors.white,
+                )),
+          ),
+          const SizedBox(
+            height: 8,
+          ),
+          const Text(
+            '复制链接',
+          )
+        ],
+      )
+    ];
+    if (!kIsWeb) {
+      buttons.add(Column(
+        children: [
+          Ink(
+            decoration: const ShapeDecoration(
+              color: Colors.green,
+              shape: CircleBorder(),
+            ),
+            child: IconButton(
+                onPressed: onShare,
+                icon: const Icon(
+                  Icons.share,
+                  color: Colors.white,
+                )),
+          ),
+          const SizedBox(
+            height: 8,
+          ),
+          const Text(
+            '分享',
+          )
+        ],
+      ));
+    }
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceAround,
+      children: buttons,
+    );
   }
 
   @override
@@ -102,7 +165,7 @@ class _InviteFriendsState extends State<InviteFriends> {
                         child: Column(
                           children: [
                             Image.asset(
-                              'lib/assets/poster.webp',
+                              'assets/images/poster.webp',
                               fit: BoxFit.fitWidth,
                             ),
                             Container(
@@ -135,7 +198,7 @@ class _InviteFriendsState extends State<InviteFriends> {
                                       ],
                                     ),
                                     QrImage(
-                                      data: inviteCode,
+                                      data: inviteLink,
                                       version: QrVersions.auto,
                                       size: 66.0,
                                       backgroundColor: Colors.white,
@@ -151,55 +214,23 @@ class _InviteFriendsState extends State<InviteFriends> {
                       // ),
                       Ink(
                         padding: const EdgeInsets.symmetric(vertical: 20),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceAround,
-                          children: [
-                            Column(
-                              children: [
-                                Ink(
-                                  decoration: const ShapeDecoration(
-                                    color: Colors.orange,
-                                    shape: CircleBorder(),
-                                  ),
-                                  child: IconButton(
-                                      onPressed: onCopy,
-                                      icon: const Icon(
-                                        Icons.link,
-                                        color: Colors.white,
-                                      )),
-                                ),
-                                const SizedBox(
-                                  height: 8,
-                                ),
-                                const Text(
-                                  '复制链接',
-                                )
-                              ],
-                            ),
-                            Column(
-                              children: [
-                                Ink(
-                                  decoration: const ShapeDecoration(
-                                    color: Colors.green,
-                                    shape: CircleBorder(),
-                                  ),
-                                  child: IconButton(
-                                      onPressed: onShare,
-                                      icon: const Icon(
-                                        Icons.share,
-                                        color: Colors.white,
-                                      )),
-                                ),
-                                const SizedBox(
-                                  height: 8,
-                                ),
-                                const Text(
-                                  '分享',
-                                )
-                              ],
-                            )
-                          ],
-                        ),
+                        child: buildButtons(),
+                      ),
+                      Consumer<UserProvider>(
+                        builder: (context, value, child) {
+                          var user = value.user;
+                          if (user.id.isEmpty) {
+                            return Container(
+                              margin: const EdgeInsets.only(top: 12),
+                              child: TextButton(
+                                  onPressed: () {
+                                    Get.offNamed(Login.routeName);
+                                  },
+                                  child: const Text('还未登录，前去登录 >')),
+                            );
+                          }
+                          return Container();
+                        },
                       )
                     ],
                   )),

@@ -53,7 +53,7 @@ class _TopupStoreState extends State<TopupStore> {
                               child: ClipRRect(
                                 borderRadius: BorderRadius.circular(4),
                                 child: Image.asset(
-                                  'lib/assets/value_cards/${values[index]}.jpg',
+                                  'assets/images/value_cards/${values[index]}.jpg',
                                   height: 80,
                                 ),
                               )),

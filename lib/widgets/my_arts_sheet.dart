@@ -55,7 +55,7 @@ class _MyArtsSheetState extends State<MyArtsSheet> {
   @override
   Widget build(BuildContext context) {
     return Container(
-        constraints: const BoxConstraints(maxHeight: 400),
+        constraints: const BoxConstraints(maxHeight: 300),
         padding: EdgeInsets.all(mainPadding),
         decoration: const BoxDecoration(
             color: Colors.white,
@@ -126,7 +126,7 @@ class _MyArtsSheetState extends State<MyArtsSheet> {
                             right: 0,
                             child: ClipOval(
                               child: Container(
-                                color: Colors.grey.shade900,
+                                color: Colors.grey.shade800,
                                 padding: const EdgeInsets.all(4),
                                 child: const Icon(
                                   Icons.arrow_forward,

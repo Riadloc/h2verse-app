@@ -39,6 +39,17 @@ enum SnackBarType {
   request_fail
 }
 
+enum PayType {
+  /// 默认
+  unset,
+
+  /// 支付宝
+  alipay,
+
+  /// 连连
+  lianlian
+}
+
 class GoodOperatorStatus {
   static const int UNSET = 0;
   static const int WAIT = 1;

@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 
 final OutlineInputBorder kInputBorder = OutlineInputBorder(
   borderRadius: BorderRadius.circular(8),
-  borderSide: const BorderSide(
-    color: Color(0xFFECECEC),
+  borderSide: BorderSide(
+    color: Colors.grey.shade100,
     width: 1,
   ),
 );
@@ -21,7 +21,7 @@ const List<BoxShadow> kCardBoxShadow = [
     offset: Offset(0, 10),
     blurRadius: 10,
     spreadRadius: 0,
-    color: Color.fromRGBO(230, 230, 230, 0.5),
+    color: Color.fromRGBO(230, 230, 230, 0.1),
   )
 ];
 
@@ -50,6 +50,7 @@ const Color xPrimaryColor = Color(0xFF3491FA);
 final ThemeData theme = ThemeData(
     backgroundColor: const Color.fromARGB(255, 247, 247, 247),
     primarySwatch: Colors.lightBlue,
+    // visualDensity: VisualDensity.standard,
     inputDecorationTheme: InputDecorationTheme(
       border: kInputBorder,
       focusedBorder: kInputFocusdBorder,

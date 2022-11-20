@@ -5,6 +5,7 @@ import 'package:h2verse_app/constants/enum.dart';
 import 'package:h2verse_app/constants/theme.dart';
 import 'package:h2verse_app/models/art_model.dart';
 import 'package:h2verse_app/services/art_service.dart';
+import 'package:h2verse_app/utils/helper.dart';
 import 'package:h2verse_app/views/detail/art_detail.dart';
 import 'package:h2verse_app/widgets/empty_placeholder.dart';
 import 'package:h2verse_app/widgets/market_skeleton.dart';
@@ -82,7 +83,7 @@ class UserShowListState extends State<UserShowList>
     if (initLoading) {
       return MarketSkeleton(padding: padding);
     }
-    double itemWidth = (MediaQuery.of(context).size.width - padding * 3) / 2;
+    double itemWidth = (getDimensions().width - padding * 3) / 2;
     double childAspectRatio = itemWidth / (itemWidth + 70);
     return EasyRefresh.builder(
         onRefresh: () async {
@@ -142,38 +143,25 @@ class UserShowCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Ink(
-        decoration: BoxDecoration(
-            color: Colors.white,
-            boxShadow: kCardBoxShadow,
-            borderRadius: BorderRadius.circular(raduis)),
+        color: Colors.white,
         child: InkWell(
           onTap: onTap,
           child:
               Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
             Stack(
               children: [
-                ClipRRect(
-                  borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(raduis),
-                    topRight: Radius.circular(raduis),
-                  ),
-                  child: AspectRatio(
-                      aspectRatio: 1,
-                      child: Image.network(
-                        artData.cover,
-                        fit: BoxFit.cover,
-                      )),
-                ),
+                AspectRatio(
+                    aspectRatio: 1,
+                    child: Image.network(
+                      artData.cover,
+                      fit: BoxFit.cover,
+                    )),
               ],
             ),
             Container(
               width: double.infinity,
               height: 70,
               padding: const EdgeInsets.all(10),
-              decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(raduis),
-                  boxShadow: kCardBoxShadow),
               child: Column(
                   mainAxisSize: MainAxisSize.min,
                   crossAxisAlignment: CrossAxisAlignment.start,

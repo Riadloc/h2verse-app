@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:h2verse_app/constants/theme.dart';
+import 'package:h2verse_app/views/home_wrapper.dart';
 import 'package:h2verse_app/views/order/my_order_list.dart';
 
 class Orders extends StatefulWidget {
@@ -29,12 +31,19 @@ class _OrdersState extends State<Orders> {
           child: NestedScrollView(
             headerSliverBuilder: (context, innerBoxIsScrolled) {
               return [
-                const SliverAppBar(
+                SliverAppBar(
                   pinned: false,
                   floating: false,
                   snap: false,
-                  title: Text('我的订单'),
+                  title: const Text('我的订单'),
                   backgroundColor: Colors.white,
+                  actions: [
+                    IconButton(
+                        onPressed: () {
+                          Get.offNamed(HomeWrapper.routeName);
+                        },
+                        icon: const Icon(Icons.home_filled))
+                  ],
                 ),
               ];
             },

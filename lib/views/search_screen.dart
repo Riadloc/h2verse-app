@@ -54,7 +54,7 @@ class _SearchScreenState extends State<SearchScreen> {
       showHistory = false;
     });
     var box = Hive.box(LocalDB.BOX);
-    List<String> history = box.get(LocalDB.SEARCH, defaultValue: <String>[]);
+    List<dynamic> history = box.get(LocalDB.SEARCH, defaultValue: <String>[]);
     history.remove(query);
     if (history.length >= LocalDB.SEARCH_HISTORY_MAX) {
       history.removeLast();
@@ -99,8 +99,9 @@ class _SearchScreenState extends State<SearchScreen> {
               bottom: false,
               child: Column(
                 children: [
-                  Container(
+                  Ink(
                     color: Colors.white,
+                    padding: const EdgeInsets.symmetric(vertical: 4),
                     child: Column(
                       children: [
                         Row(
@@ -156,13 +157,13 @@ class _SearchScreenState extends State<SearchScreen> {
                                     return;
                                   }
                                   var box = Hive.box(LocalDB.BOX);
-                                  List<String> history = box.get(LocalDB.SEARCH,
+                                  List<dynamic> history = box.get(
+                                      LocalDB.SEARCH,
                                       defaultValue: <String>[]);
                                   var newVal = [query];
                                   history.remove(query);
-                                  newVal.addAll(history);
+                                  newVal.addAll(history.cast<String>());
                                   box.put(LocalDB.SEARCH, newVal);
-                                  print(history);
                                 },
                                 child: const Text('搜索'))
                           ],

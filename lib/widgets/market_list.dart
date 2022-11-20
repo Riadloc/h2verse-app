@@ -3,10 +3,13 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:h2verse_app/constants/enum.dart';
 import 'package:h2verse_app/constants/theme.dart';
+import 'package:h2verse_app/models/album_model.dart';
 import 'package:h2verse_app/models/market_item_model.dart';
 import 'package:h2verse_app/services/art_service.dart';
+import 'package:h2verse_app/utils/helper.dart';
 import 'package:h2verse_app/views/detail/art_detail.dart';
 import 'package:h2verse_app/widgets/empty_placeholder.dart';
+import 'package:h2verse_app/widgets/filter_sheet.dart';
 import 'package:h2verse_app/widgets/market_skeleton.dart';
 
 class MarketList extends StatefulWidget {
@@ -24,32 +27,47 @@ class MarketListState extends State<MarketList>
   @override
   bool get wantKeepAlive => true;
 
+  String choice = '0';
   int pageNo = 1;
   bool noMore = false;
   int sortKey = FilterItemKeysEnum.SORT_NEW.index;
   final int pageSize = 12;
   final double padding = 12.0;
+  final Map<String, dynamic> options = {};
 
   List<dynamic> artList = [];
   void getList() {
-    if (!noMore) {
-      ArtService.getMarketArts(
-              pageNo: pageNo,
-              type: widget.type,
-              query: widget.query,
-              sortKey: sortKey)
-          .then((value) => {
-                setState(() {
-                  List<MarketItem> data = value;
-                  artList.addAll(data);
-                  if (data.length < pageSize) {
-                    noMore = true;
-                  } else {
-                    pageNo += 1;
-                  }
-                }),
-              });
+    if (noMore) {
+      return;
     }
+    ArtService.getMarketArts(
+            pageNo: pageNo,
+            type: widget.type,
+            query: widget.query,
+            sortKey: sortKey,
+            albumId: choice)
+        .then((value) => {
+              setState(() {
+                List<MarketItem> data = value;
+                artList.addAll(data);
+                if (data.length < pageSize) {
+                  noMore = true;
+                } else {
+                  pageNo += 1;
+                }
+              }),
+            });
+  }
+
+  List<dynamic> albumList = [];
+  void getAlbums() {
+    ArtService.getAlbums(pageNo: pageNo).then((value) => {
+          setState(() {
+            List<Album> data = value;
+            data.insert(0, Album(id: '0', cover: '', name: '全部'));
+            albumList = data;
+          }),
+        });
   }
 
   void goDetail(MarketItem ele) {
@@ -70,6 +88,7 @@ class MarketListState extends State<MarketList>
     });
     artList.clear();
     getList();
+    getAlbums();
   }
 
   bool get initLoading => pageNo == 1 && !noMore && artList.isEmpty;
@@ -78,6 +97,7 @@ class MarketListState extends State<MarketList>
   void initState() {
     super.initState();
     getList();
+    getAlbums();
   }
 
   @override
@@ -86,34 +106,106 @@ class MarketListState extends State<MarketList>
     if (initLoading) {
       return MarketSkeleton(padding: padding);
     }
-    double itemWidth = (MediaQuery.of(context).size.width - padding * 3) / 2;
+    double itemWidth = (getDimensions().width - padding * 3) / 2;
     double childAspectRatio = itemWidth / (itemWidth + 70);
-    return EasyRefresh(
+    return EasyRefresh.builder(
+      header: const MaterialHeader(),
       onRefresh: () async {
         onRefresh();
       },
       onLoad: () async {
         getList();
       },
-      child: artList.isNotEmpty
-          ? GridView.builder(
-              padding: EdgeInsets.all(padding),
-              itemCount: artList.length,
-              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 2,
-                  mainAxisSpacing: 15,
-                  crossAxisSpacing: padding,
-                  childAspectRatio: childAspectRatio),
-              itemBuilder: (context, index) {
-                var item = artList[index];
-                return MarketSmallCard(
-                  artData: item,
-                  onTap: () => goDetail(item),
-                );
-              },
+      childBuilder: (context, physics) => artList.isNotEmpty
+          ? Column(
+              children: [
+                Container(
+                  height: 34,
+                  margin: EdgeInsets.only(top: padding),
+                  alignment: Alignment.centerLeft,
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Expanded(
+                          child: ListView.separated(
+                              scrollDirection: Axis.horizontal,
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 20),
+                              shrinkWrap: true,
+                              itemCount: albumList.length,
+                              separatorBuilder: (context, index) =>
+                                  const SizedBox(
+                                    width: 4,
+                                  ),
+                              itemBuilder: (context, index) {
+                                Album album = albumList[index];
+                                return ChoiceChip(
+                                  label: Text(album.name),
+                                  pressElevation: 0,
+                                  backgroundColor: Colors.grey.shade200,
+                                  materialTapTargetSize:
+                                      MaterialTapTargetSize.shrinkWrap,
+                                  selectedColor: Colors.blue.shade100,
+                                  selected: choice == album.id,
+                                  onSelected: (bool selected) {
+                                    if (choice != album.id) {
+                                      setState(() {
+                                        choice = album.id;
+                                      });
+                                      onRefresh();
+                                    }
+                                  },
+                                );
+                              })),
+                      IconButton(
+                          padding: EdgeInsets.zero,
+                          // constraints:
+                          //     const BoxConstraints(maxHeight: 40, maxWidth: 40),
+                          onPressed: () {
+                            Get.bottomSheet(FilterSheet(
+                              sortKey: sortKey,
+                              onApply: (Map<String, int> values) {
+                                sortKey = values['sortKey']!;
+                                onRefresh();
+                              },
+                              onReset: () {
+                                sortKey = FilterItemKeysEnum.SORT_NEW.index;
+                                onRefresh();
+                              },
+                            ));
+                          },
+                          splashColor: Colors.transparent,
+                          highlightColor: Colors.transparent,
+                          icon: const Icon(Icons.tune))
+                    ],
+                  ),
+                ),
+                Expanded(
+                    child: GridView.builder(
+                  physics: physics,
+                  padding: EdgeInsets.all(padding),
+                  itemCount: artList.length,
+                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: 2,
+                      mainAxisSpacing: 15,
+                      crossAxisSpacing: padding,
+                      childAspectRatio: childAspectRatio),
+                  itemBuilder: (context, index) {
+                    var item = artList[index];
+                    return MarketSmallCard(
+                      artData: item,
+                      onTap: () => goDetail(item),
+                    );
+                  },
+                ))
+              ],
             )
           : ListView(
-              children: const [EmptyPlaceholder()],
+              physics: physics,
+              children: [
+                EmptyPlaceholder(
+                    title: widget.type == 1 ? '对接元枢市场中...' : '没有数据')
+              ],
             ),
     );
   }

@@ -22,6 +22,7 @@ class Art {
   final int? level;
   final List<dynamic>? boxs;
   final String? tokenId;
+  final String? powerId;
   final String? goodNo;
   final int? count;
   final int? operatorStatus;
@@ -49,6 +50,7 @@ class Art {
     this.level,
     this.boxs,
     this.tokenId,
+    this.powerId,
     this.goodNo,
     this.count,
     this.operatorStatus,
@@ -106,6 +108,7 @@ class Art {
         level: level ?? this.level,
         boxs: boxs ?? this.boxs,
         tokenId: tokenId ?? this.tokenId,
+        powerId: powerId ?? this.powerId,
         goodNo: goodNo ?? this.goodNo,
         count: count ?? this.count,
         operatorStatus: operatorStatus ?? this.operatorStatus,
@@ -138,6 +141,7 @@ class Art {
       'level': level,
       'boxs': boxs,
       'tokenId': tokenId,
+      'powerId': powerId,
       'goodNo': goodNo,
       'count': count,
       'operatorStatus': operatorStatus,
@@ -174,6 +178,7 @@ class Art {
           ? List<dynamic>.from((map['boxs'] as List<dynamic>))
           : null,
       tokenId: map['tokenId'] != null ? map['tokenId'] as String : null,
+      powerId: map['powerId'] != null ? map['powerId'] as String : null,
       goodNo: map['goodNo'] != null ? map['goodNo'] as String : null,
       count: map['count'] != null ? map['count'] as int : null,
       operatorStatus:
@@ -195,7 +200,7 @@ class Art {
 
   @override
   String toString() {
-    return 'Art(id: $id, cover: $cover, name: $name, price: $price, ownner: $ownner, copies: $copies, realCopies: $realCopies, serial: $serial, status: $status, limit: $limit, ownerUuid: $ownerUuid, description: $description, pictures: $pictures, isBox: $isBox, type: $type, level: $level, boxs: $boxs, tokenId: $tokenId, goodNo: $goodNo, count: $count, operatorStatus: $operatorStatus, nodes: $nodes, nodeIndex: $nodeIndex, showNodes: $showNodes, shelfTime: $shelfTime)';
+    return 'Art(id: $id, cover: $cover, name: $name, price: $price, ownner: $ownner, copies: $copies, realCopies: $realCopies, serial: $serial, status: $status, limit: $limit, ownerUuid: $ownerUuid, description: $description, pictures: $pictures, isBox: $isBox, type: $type, level: $level, boxs: $boxs, tokenId: $tokenId, powerId: $powerId, goodNo: $goodNo, count: $count, operatorStatus: $operatorStatus, nodes: $nodes, nodeIndex: $nodeIndex, showNodes: $showNodes, shelfTime: $shelfTime)';
   }
 
   @override
@@ -220,6 +225,7 @@ class Art {
         other.level == level &&
         listEquals(other.boxs, boxs) &&
         other.tokenId == tokenId &&
+        other.powerId == powerId &&
         other.goodNo == goodNo &&
         other.count == count &&
         other.operatorStatus == operatorStatus &&
@@ -250,6 +256,7 @@ class Art {
         level.hashCode ^
         boxs.hashCode ^
         tokenId.hashCode ^
+        powerId.hashCode ^
         goodNo.hashCode ^
         count.hashCode ^
         operatorStatus.hashCode ^

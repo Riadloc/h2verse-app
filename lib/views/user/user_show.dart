@@ -1,3 +1,4 @@
+import 'package:city_pickers/city_pickers.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:h2verse_app/constants/theme.dart';
@@ -5,6 +6,7 @@ import 'package:h2verse_app/constants/theme.dart';
 import 'package:h2verse_app/models/user_short_info_model.dart';
 import 'package:h2verse_app/services/user_service.dart';
 import 'package:h2verse_app/views/user/widgets/user_show_list.dart';
+import 'package:h2verse_app/widgets/cached_image.dart';
 
 class UserShow extends StatefulWidget {
   const UserShow({Key? key}) : super(key: key);
@@ -102,12 +104,19 @@ class _UserShowState extends State<UserShow>
                     Stack(
                       clipBehavior: Clip.none,
                       children: [
-                        Image.asset(
-                          'lib/assets/milad-fakurian.jpg',
-                          height: 180,
-                          width: double.infinity,
-                          fit: BoxFit.cover,
-                        ),
+                        user!.background.isNotEmpty
+                            ? CachedImage(
+                                user!.background,
+                                height: 180,
+                                width: double.infinity,
+                                fit: BoxFit.cover,
+                              )
+                            : Image.asset(
+                                'assets/images/milad-fakurian.jpg',
+                                height: 180,
+                                width: double.infinity,
+                                fit: BoxFit.cover,
+                              ),
                         Positioned(
                             bottom: -52,
                             left: 0,
@@ -127,12 +136,12 @@ class _UserShowState extends State<UserShow>
                                         decoration: const ShapeDecoration(
                                           shape: CircleBorder(),
                                         ),
-                                        child: ClipRRect(
-                                          borderRadius:
-                                              BorderRadius.circular(80),
-                                          child: Image.asset(
-                                              'lib/assets/avatar1.jpg',
-                                              width: 80),
+                                        child: ClipOval(
+                                          child: CachedImage(
+                                            user!.avatar,
+                                            width: 80,
+                                            height: 80,
+                                          ),
                                         )))
                               ],
                             ))

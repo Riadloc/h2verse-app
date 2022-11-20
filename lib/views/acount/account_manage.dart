@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:h2verse_app/constants/theme.dart';
-import 'package:h2verse_app/utils/authenticated.dart';
+import 'package:h2verse_app/utils/helper.dart';
 import 'package:h2verse_app/views/acount/bankcard_list.dart';
 import 'package:h2verse_app/views/acount/trade_password_form.dart';
 import 'package:h2verse_app/views/user/user_address.dart';
@@ -13,7 +13,7 @@ class AccountManage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    double itemWidth = (MediaQuery.of(context).size.width - 47) / 2;
+    double itemWidth = (getDimensions().width - 47) / 2;
     return Scaffold(
       appBar: AppBar(
         elevation: 0,
@@ -27,12 +27,12 @@ class AccountManage extends StatelessWidget {
           runSpacing: 12,
           children: [
             // AccountCard(
-            //   icon: 'lib/assets/locker-front-gradient.webp',
+            //   icon: 'assets/images/locker-front-gradient.webp',
             //   width: itemWidth,
             //   title: '账户钱包',
             // ),
             AccountCard(
-              icon: 'lib/assets/wallet-front-gradient.webp',
+              icon: 'assets/images/wallet-front-gradient.webp',
               width: itemWidth,
               title: '银行卡管理',
               onTap: () {
@@ -40,7 +40,7 @@ class AccountManage extends StatelessWidget {
               },
             ),
             AccountCard(
-              icon: 'lib/assets/lock-front-gradient.webp',
+              icon: 'assets/images/lock-front-gradient.webp',
               width: itemWidth,
               title: '交易密码',
               onTap: () async {
@@ -48,12 +48,12 @@ class AccountManage extends StatelessWidget {
               },
             ),
             // AccountCard(
-            //   icon: 'lib/assets/lock-front-gradient.webp',
+            //   icon: 'assets/images/lock-front-gradient.webp',
             //   width: itemWidth,
             //   title: '提现密码',
             // ),
             AccountCard(
-              icon: 'lib/assets/map-pin-front-gradient.webp',
+              icon: 'assets/images/map-pin-front-gradient.webp',
               width: itemWidth,
               title: '地址管理',
               onTap: () {

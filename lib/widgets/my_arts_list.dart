@@ -8,6 +8,7 @@ import 'package:h2verse_app/models/art_model.dart';
 import 'package:h2verse_app/services/art_service.dart';
 import 'package:h2verse_app/utils/event_bus.dart';
 import 'package:h2verse_app/utils/events.dart';
+import 'package:h2verse_app/utils/helper.dart';
 import 'package:h2verse_app/widgets/empty_placeholder.dart';
 import 'package:h2verse_app/widgets/market_skeleton.dart';
 import 'package:h2verse_app/widgets/my_arts_sheet.dart';
@@ -73,7 +74,7 @@ class _MyArtsListState extends State<MyArtsList>
     if (initLoading) {
       return MarketSkeleton(padding: padding);
     }
-    double itemWidth = (MediaQuery.of(context).size.width - padding * 3) / 2;
+    double itemWidth = (getDimensions().width - padding * 3) / 2;
     double childAspectRatio = itemWidth / (itemWidth + 50);
     return EasyRefresh(
         onRefresh: refresh,
@@ -177,7 +178,7 @@ class BlurChip extends StatelessWidget {
       child: BackdropFilter(
         filter: ImageFilter.blur(sigmaX: 10.0, sigmaY: 10.0),
         child: Container(
-          color: Colors.white.withOpacity(0.1),
+          color: Colors.white.withOpacity(0.5),
           padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 6),
           alignment: Alignment.center,
           child: Text(

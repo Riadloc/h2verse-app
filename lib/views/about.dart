@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:h2verse_app/views/my_webview.dart';
+import 'package:h2verse_app/views/webview/my_webview.dart';
 import 'package:h2verse_app/widgets/tap_tile.dart';
 
 class About extends StatefulWidget {
@@ -23,12 +23,11 @@ class _AboutState extends State<About> {
       body: ListView(
         children: [
           TapTile(
-            icon: Icons.public_outlined,
             title: '关于氢宇宙',
             onTap: () {
               Get.toNamed(MyWebview.routeName, arguments: {
                 'title': '关于氢宇宙',
-                'url': 'https://h5.h2verse.art/agreement/platform'
+                'url': 'https://static.h2verse.art/agreement/platform'
               });
             },
           ),
@@ -38,12 +37,11 @@ class _AboutState extends State<About> {
             endIndent: 16,
           ),
           TapTile(
-            icon: Icons.account_box_outlined,
             title: '用户协议',
             onTap: () {
               Get.toNamed(MyWebview.routeName, arguments: {
                 'title': '用户协议',
-                'url': 'https://h5.h2verse.art/agreement/user'
+                'url': 'https://static.h2verse.art/agreement/user'
               });
             },
           ),
@@ -53,12 +51,11 @@ class _AboutState extends State<About> {
             endIndent: 16,
           ),
           TapTile(
-            icon: Icons.privacy_tip_outlined,
             title: '隐私协议',
             onTap: () {
               Get.toNamed(MyWebview.routeName, arguments: {
                 'title': '隐私协议',
-                'url': 'https://h5.h2verse.art/agreement/privacy'
+                'url': 'https://static.h2verse.art/agreement/privacy'
               });
             },
           ),

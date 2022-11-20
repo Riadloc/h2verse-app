@@ -1,6 +1,6 @@
-import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:carousel_slider/carousel_slider.dart';
 import 'package:h2verse_app/models/bulletin_model.dart';
 import 'package:h2verse_app/services/common_service.dart';
 import 'package:h2verse_app/views/bulletin/bulletin.dart';
@@ -31,13 +31,6 @@ class _NoticeBarState extends State<NoticeBar> {
     }
   }
 
-  RotateAnimatedText buildRotateText(String text) {
-    return RotateAnimatedText(text,
-        transitionHeight: height,
-        duration: const Duration(seconds: 1),
-        rotateOut: false);
-  }
-
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -53,19 +46,23 @@ class _NoticeBarState extends State<NoticeBar> {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             const Icon(Icons.notes_outlined),
-            const SizedBox(
-              width: 8,
-            ),
             Expanded(
                 flex: 2,
                 child: bulletins.isNotEmpty
-                    ? DefaultTextStyle(
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                        textAlign: TextAlign.left,
-                        style: const TextStyle(
-                            fontSize: 15.0, color: Colors.black),
-                        child: Text(bulletins[0].title),
+                    ? CarouselSlider.builder(
+                        options: CarouselOptions(
+                            autoPlay: true,
+                            height: 20,
+                            viewportFraction: 1,
+                            scrollPhysics: const NeverScrollableScrollPhysics(),
+                            scrollDirection: Axis.vertical),
+                        itemCount: bulletins.length >= 3 ? 3 : bulletins.length,
+                        itemBuilder: (BuildContext context, int itemIndex,
+                                int pageViewIndex) =>
+                            Text(bulletins[itemIndex].name,
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                                style: const TextStyle(fontSize: 15.0)),
                       )
                     : Container()),
             const Icon(

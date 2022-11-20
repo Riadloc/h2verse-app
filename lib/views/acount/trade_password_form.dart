@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:h2verse_app/services/user_service.dart';
 import 'package:h2verse_app/utils/toast.dart';
-import 'package:h2verse_app/utils/yindun_captcha.dart';
+import 'package:h2verse_app/utils/yidun_captcha/yidun_captcha.dart';
 import 'package:h2verse_app/widgets/loading_button.dart';
 import 'package:h2verse_app/widgets/login_input.dart';
 
@@ -50,11 +50,10 @@ class _TradePasswordFormState extends State<TradePasswordForm> {
       return;
     }
     YidunCaptcha().show((object) {
-      var resp = object;
-      if (resp.result == true) {
+      if (object.result) {
         onSubmit(payKey, password);
       }
-    }, (object) => null);
+    });
   }
 
   @override
@@ -67,14 +66,13 @@ class _TradePasswordFormState extends State<TradePasswordForm> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        backgroundColor: Colors.white,
+        // backgroundColor: Colors.white,
         appBar: AppBar(
           elevation: 1,
           backgroundColor: Colors.white,
           title: const Text('交易密码'),
         ),
         body: Container(
-          color: Colors.white,
           margin: const EdgeInsets.all(20),
           child: Form(
               key: _formKey,

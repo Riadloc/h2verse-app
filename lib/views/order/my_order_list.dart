@@ -45,6 +45,15 @@ class _MyOrderListState extends State<MyOrderList>
     }
   }
 
+  void reload() {
+    setState(() {
+      pageNo = 1;
+      noMore = false;
+      artList.clear();
+      getList();
+    });
+  }
+
   @override
   void initState() {
     super.initState();
@@ -68,14 +77,7 @@ class _MyOrderListState extends State<MyOrderList>
     }
     return EasyRefresh(
       header: const MaterialHeader(),
-      onRefresh: () async {
-        setState(() {
-          pageNo = 1;
-          noMore = false;
-          artList.clear();
-          getList();
-        });
-      },
+      onRefresh: reload,
       onLoad: () async {
         getList();
       },
@@ -96,8 +98,14 @@ class _MyOrderListState extends State<MyOrderList>
             // margin: const EdgeInsets.only(bottom: 8),
             child: InkWell(
               onTap: () {
-                Get.toNamed(OrderDetail.routeName,
-                    arguments: {'orderId': e.id});
+                Get.toNamed(
+                  OrderDetail.routeName,
+                  arguments: {'orderId': e.id},
+                )?.then((value) {
+                  if (value == true) {
+                    reload();
+                  }
+                });
               },
               borderRadius: BorderRadius.circular(8),
               child: Padding(

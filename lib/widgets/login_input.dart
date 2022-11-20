@@ -22,9 +22,12 @@ class LoginInput extends StatelessWidget {
       this.icon,
       this.obscure = false,
       this.type = InputType.text,
+      this.fillColor = Colors.white,
       this.suffix,
+      this.readonly = false,
       this.controller,
       this.validator,
+      this.onTap,
       this.onChanged})
       : super(key: key);
 
@@ -35,6 +38,9 @@ class LoginInput extends StatelessWidget {
   final Widget? suffix;
   final TextEditingController? controller;
   final String? Function(String?)? validator;
+  final Color? fillColor;
+  final bool readonly;
+  final void Function()? onTap;
   final void Function(String)? onChanged;
   TextInputType keyboardType = TextInputType.text;
   List<TextInputFormatter>? inputFormatters;
@@ -104,13 +110,17 @@ class LoginInput extends StatelessWidget {
                 )
               : null,
           suffixIcon: suffix,
+          fillColor: fillColor,
+          filled: true,
         ),
         style: const TextStyle(fontSize: 14),
         obscureText: obscure,
+        readOnly: readonly,
         controller: controller,
         inputFormatters: inputFormatters,
         validator: validator,
         onChanged: onChanged,
+        onTap: onTap,
         keyboardType: keyboardType);
   }
 }

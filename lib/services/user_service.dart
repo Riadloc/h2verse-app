@@ -51,8 +51,12 @@ class UserService {
     required String phone,
     required String code,
     required String password,
+    String? inviteCode,
   }) async {
     var data = {'phone': phone, 'code': code, 'password': password};
+    if (inviteCode != null) {
+      data['inviteCode'] = inviteCode;
+    }
     Response response;
     response = await HttpUtils().dio.post('/user/singup', data: data);
     if (response.data['code'] == 0) {
@@ -69,10 +73,10 @@ class UserService {
     response = await HttpUtils().dio.post('/user/logout', data: reportData);
     if (response.data['code'] == 0) {
       Toast.show('退出登录成功');
-      getx.Get.offAllNamed(Login.routeName);
-      return;
+      return true;
     }
     Alert.reqFail(response.data['msg']);
+    return false;
   }
 
   static Future getUserInfo() async {
@@ -177,6 +181,31 @@ class UserService {
     return false;
   }
 
+  static Future certifyWeb(
+      {required String realName,
+      required String idNo,
+      required String phone,
+      required String code}) async {
+    var data = {
+      'phone': phone,
+      'code': code,
+      'realName': realName,
+      'idNo': idNo
+    };
+    EasyLoading.show(status: '机器人处理中...');
+    var reportData = await getReportParams();
+    data.addAll(reportData);
+    Response response;
+    response = await HttpUtils().dio.post('/user/certify', data: data);
+    EasyLoading.dismiss();
+    if (response.data['code'] == 0) {
+      Toast.show('实名认证成功！');
+      return true;
+    }
+    Alert.reqFail(response.data['msg']);
+    return false;
+  }
+
   static Future<Address?> getAddress() async {
     EasyLoading.show(status: '机器人处理中...');
     Response response;
@@ -246,7 +275,7 @@ class UserService {
   }
 
   static Future<UserShortInfo?> getShortInfo({required String id}) async {
-    var queryParameters = {'id': id};
+    var queryParameters = {'id': id, 'isPlanet': 1};
     EasyLoading.show(status: '机器人处理中...');
     Response response = await HttpUtils()
         .dio
@@ -258,5 +287,24 @@ class UserService {
     }
     Alert.reqFail(response.data['msg']);
     return null;
+  }
+
+  static Future authorize({
+    required String phone,
+    required String code,
+    required Map<String, String> extra,
+  }) async {
+    var data = {'phone': phone, 'code': code};
+    data.addAll(extra);
+    var reportData = await getReportParams();
+    data.addAll(reportData);
+    Response response;
+    response = await HttpUtils().dio.post('/open/authorize', data: data);
+    if (response.data['code'] == 0) {
+      Toast.show('授权成功！');
+      NormalResp data = response.data['data'];
+      return data;
+    }
+    Alert.reqFail(response.data['msg']);
   }
 }

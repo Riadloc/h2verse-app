@@ -55,7 +55,6 @@ class _UserEditState extends State<UserEdit> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
       appBar: AppBar(
         elevation: 0,
         title: const Text('个人信息'),
@@ -66,7 +65,7 @@ class _UserEditState extends State<UserEdit> {
           child: Column(children: [
             Center(
               child: Image.asset(
-                'lib/assets/Icons_BlueGreenGold_Planet_01.webp',
+                'assets/images/Icons_BlueGreenGold_Planet_01.webp',
                 height: 200,
                 fit: BoxFit.cover,
               ),
@@ -77,7 +76,7 @@ class _UserEditState extends State<UserEdit> {
                 children: [
                   LoginInput(
                     hintText: '昵称',
-                    icon: Icons.yard_outlined,
+                    icon: Icons.person_outline,
                     controller: _nameController,
                     type: InputType.nickname,
                     validator: (value) {

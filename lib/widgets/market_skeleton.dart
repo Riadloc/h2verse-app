@@ -13,14 +13,14 @@ class MarketSkeleton extends StatelessWidget {
             baseColor: Colors.black38,
             highlightColor: Colors.white,
             child: GridView.builder(
-              gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
-                mainAxisSpacing: 20,
-                crossAxisSpacing: 20,
+              gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
+                mainAxisSpacing: padding,
+                crossAxisSpacing: padding,
                 childAspectRatio: 0.6,
                 maxCrossAxisExtent: 200,
               ),
-              shrinkWrap: true,
               itemCount: 8,
+              physics: const NeverScrollableScrollPhysics(),
               itemBuilder: (context, index) {
                 return Container(
                   margin: const EdgeInsets.only(bottom: 15),

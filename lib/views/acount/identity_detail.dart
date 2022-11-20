@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
 
@@ -24,12 +25,19 @@ class _IdentityDetailState extends State<IdentityDetail> {
         width: double.infinity,
         child: Column(
           children: [
-            Lottie.asset(
-              'lib/assets/lottie/verified-badge.json',
-              width: 300,
-              height: 300,
-              fit: BoxFit.fill,
-            ),
+            kIsWeb
+                ? Image.asset(
+                    'assets/images/sheild.webp',
+                    width: 300,
+                    height: 300,
+                    fit: BoxFit.fill,
+                  )
+                : Lottie.asset(
+                    'assets/lottie/103555-success.zip',
+                    width: 300,
+                    height: 300,
+                    fit: BoxFit.fill,
+                  ),
             const SizedBox(
               height: 20,
             ),

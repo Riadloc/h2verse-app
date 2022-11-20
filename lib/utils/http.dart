@@ -1,36 +1,38 @@
 import 'dart:convert';
-import 'dart:io';
-
-import 'package:cookie_jar/cookie_jar.dart';
 import 'package:dio/dio.dart';
-import 'package:dio_cookie_manager/dio_cookie_manager.dart';
-import 'package:dio_cache_interceptor/dio_cache_interceptor.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:get/get.dart';
-import 'package:path_provider/path_provider.dart';
+import 'package:h2verse_app/constants/constants.dart';
 import 'package:h2verse_app/utils/alert.dart';
 import 'package:h2verse_app/views/login.dart';
+import 'package:hive/hive.dart';
 
 class HttpUtils {
   late final Dio dio;
 
   HttpUtils._internal() {
-    dio = Dio(BaseOptions(
+    const appEnv = String.fromEnvironment('APP_ENV');
+    var baseUrl = 'https://h5.h2verse.art';
+    if (appEnv == 'dev') {
+      baseUrl = 'https://dev.h2verse.art';
+    }
+    BaseOptions options = BaseOptions(
       // baseUrl: 'http://192.168.31.210:3000/api',
       // baseUrl: 'http://192.168.2.230:3000/api',
-      baseUrl: kReleaseMode
-          ? 'https://h5.h2verse.art/api'
-          : 'http://192.168.2.230:3000/api',
-      connectTimeout: 5000,
+      baseUrl: kReleaseMode ? '$baseUrl/api' : 'http://192.168.2.230:3000/api',
       validateStatus: (status) => status! >= 200 && status < 500,
-    ));
-    if (!kIsWeb) {
-      addCookieJar(dio);
-    }
+    );
+    dio = Dio(options);
     dio.interceptors.add(InterceptorsWrapper(
       onRequest: (options, handler) {
         if (options.method == 'POST') {
           //
+        }
+        var box = Hive.box(LocalDB.BOX);
+        String token = box.get(LocalDB.TOKEN, defaultValue: '');
+        if (token.isNotEmpty) {
+          options.headers['Authorization'] = 'Bearer $token';
         }
         return handler.next(options);
       },
@@ -44,46 +46,44 @@ class HttpUtils {
             Alert.reqFail('被禁止的请求');
             break;
           case 429:
-            Alert.reqFail('请求太过频繁，请稍后重试');
+            Alert.reqFail('请求太过频繁，请稍后再试');
             break;
         }
         dynamic data = options.data['data'];
         try {
           data = data is String
-              ? jsonDecode(
+              ? json.decode(
                   Uri.decodeComponent(String.fromCharCodes(base64Decode(data))))
               : data;
         } catch (err) {
           //
         }
         options.data['data'] = data;
+        var token = options.headers['x-set-token'];
+        if (token != null && token.isNotEmpty) {
+          var box = Hive.box(LocalDB.BOX);
+          box.put(LocalDB.TOKEN, token[0]);
+        }
         return handler.next(options);
       },
       onError: (options, handler) {
-        Alert.reqFail('请联系管理员');
-        return handler.next(options);
+        Alert.reqFail('服务遇到问题');
+        EasyLoading.dismiss();
+        // return handler.next(options);
       },
     ));
-    dio.interceptors.add(DioCacheInterceptor(
-        options: CacheOptions(
-      store: MemCacheStore(),
-      policy: CachePolicy.request,
-      hitCacheOnErrorExcept: [401, 403],
-      priority: CachePriority.normal,
-      keyBuilder: CacheOptions.defaultCacheKeyBuilder,
-      allowPostMethod: false,
-    )));
+    // dio.interceptors.add(DioCacheInterceptor(
+    //     options: CacheOptions(
+    //   store: MemCacheStore(),
+    //   policy: CachePolicy.request,
+    //   hitCacheOnErrorExcept: [401, 403],
+    //   priority: CachePriority.normal,
+    //   keyBuilder: CacheOptions.defaultCacheKeyBuilder,
+    //   allowPostMethod: false,
+    // )));
   }
 
   factory HttpUtils() => _instance;
 
   static late final HttpUtils _instance = HttpUtils._internal();
-
-  Future addCookieJar(Dio dio) async {
-    Directory appDocDir = await getApplicationDocumentsDirectory();
-    String appDocPath = appDocDir.path;
-    var cj = PersistCookieJar(
-        ignoreExpires: true, storage: FileStorage("$appDocPath/.cookies/"));
-    dio.interceptors.add(CookieManager(cj));
-  }
 }

@@ -1,9 +1,13 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:h2verse_app/constants/constants.dart';
+import 'package:h2verse_app/providers/user_provider.dart';
 import 'package:h2verse_app/views/home.dart';
-import 'package:h2verse_app/views/market.dart';
+import 'package:h2verse_app/views/planets/planets.dart';
 import 'package:h2verse_app/views/user_arts.dart';
 import 'package:h2verse_app/views/user_zone.dart';
-import 'package:h2verse_app/widgets/animated_index_stack.dart';
+import 'package:hive/hive.dart';
+import 'package:provider/provider.dart';
 
 class HomeWrapper extends StatefulWidget {
   const HomeWrapper({Key? key}) : super(key: key);
@@ -25,6 +29,29 @@ class _HomeWrapperState extends State<HomeWrapper> {
     });
   }
 
+  void setInviteCode() {
+    if (kIsWeb) {
+      Uri uri = Uri.base;
+      var query = uri.queryParameters;
+      if (query['code'] != null && query['code'] != '') {
+        var box = Hive.box(LocalDB.BOX);
+        var user = Provider.of<UserProvider>(context, listen: false).user;
+        if (user.id.isEmpty) {
+          // 如果用户已经登录则删除邀请码
+          box.delete(LocalDB.INVITE_CODE);
+        } else {
+          box.put(LocalDB.INVITE_CODE, query['code']);
+        }
+      }
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    setInviteCode();
+  }
+
   @override
   void dispose() {
     pageController.dispose();
@@ -35,7 +62,7 @@ class _HomeWrapperState extends State<HomeWrapper> {
   Widget build(BuildContext context) {
     final List<Widget> routes = <Widget>[
       Home(changeTab: _onItemTapped),
-      const Market(),
+      const Planets(),
       const UserArts(),
       UserZone(changeTab: _onItemTapped),
     ];

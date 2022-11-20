@@ -54,7 +54,6 @@ class _ArtPutOnFormState extends State<ArtPutOnForm> {
                   type: InputType.price,
                   controller: _priceController,
                   onChanged: (_price) {
-                    print(_price);
                     setState(() {
                       price = _price.isNotEmpty ? num.parse(_price) : 0;
                     });

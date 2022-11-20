@@ -53,6 +53,9 @@ class _FilterSheetState extends State<FilterSheet> {
               '排序',
               style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
             ),
+            const SizedBox(
+              height: 4,
+            ),
             Wrap(
               spacing: 8,
               children: [

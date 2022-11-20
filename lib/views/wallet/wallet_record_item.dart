@@ -14,11 +14,11 @@ class WalletRecordItem extends StatelessWidget {
   Widget buildThumbnail() {
     String assetName = '';
     if (record.type == WalletRecordType.TOP_UP) {
-      assetName = 'lib/assets/cunkuan.svg';
+      assetName = 'assets/images/cunkuan.svg';
     } else if (record.type == WalletRecordType.TRADE) {
-      assetName = 'lib/assets/duizhang.svg';
+      assetName = 'assets/images/duizhang.svg';
     } else if (record.type == WalletRecordType.DRAW_CASH) {
-      assetName = 'lib/assets/kabao.svg';
+      assetName = 'assets/images/kabao.svg';
     }
     if (assetName.isNotEmpty) {
       return SvgPicture.asset(

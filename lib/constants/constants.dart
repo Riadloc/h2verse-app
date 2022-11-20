@@ -9,6 +9,9 @@ const List<Color> gradientButtonPrimarycolors = [
 class LocalDB {
   static const String BOX = 'localDB';
   static const String SEARCH = 'search';
+  static const String TOKEN = 'TOKEN';
+  static const String INVITE_CODE = 'inviteCode';
+  static const String ACT = 'act';
   static const int SEARCH_HISTORY_MAX = 12;
 }
 

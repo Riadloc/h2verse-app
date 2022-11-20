@@ -1,14 +1,18 @@
 import 'package:easy_refresh/easy_refresh.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:h2verse_app/constants/theme.dart';
 import 'package:h2verse_app/utils/helper.dart';
-import 'package:h2verse_app/views/fuel/fule_list.dart';
+import 'package:h2verse_app/utils/toast.dart';
+import 'package:h2verse_app/views/invite_friends.dart';
+import 'package:h2verse_app/views/market.dart';
+import 'package:h2verse_app/views/other/app_download.dart';
+import 'package:h2verse_app/widgets/clippers/cyber_clipper.dart';
 import 'package:lottie/lottie.dart';
 import 'package:h2verse_app/constants/constants.dart';
 import 'package:h2verse_app/views/bulletin/bulletin.dart';
-import 'package:h2verse_app/views/compose/compose_list.dart';
 import 'package:h2verse_app/views/detail/art_detail.dart';
 import 'package:h2verse_app/constants/enum.dart';
 import 'package:h2verse_app/models/art_model.dart';
@@ -32,6 +36,7 @@ class _HomeState extends State<Home> with AutomaticKeepAliveClientMixin {
   List<dynamic> artList = [];
   int pageNo = 1;
   bool noMore = false;
+  bool lottieLoaded = false;
   final int pageSize = 8;
   final int padding = 12;
   final colorizeColors = [
@@ -44,7 +49,6 @@ class _HomeState extends State<Home> with AutomaticKeepAliveClientMixin {
   @override
   void initState() {
     super.initState();
-    getList();
   }
 
   void getList() {
@@ -64,10 +68,97 @@ class _HomeState extends State<Home> with AutomaticKeepAliveClientMixin {
     }
   }
 
+  Widget buildQuickNav() {
+    List<Widget> children = [
+      ShortCutCard(
+        text: '邀请好友',
+        icon: Icons.emoji_emotions,
+        color: Colors.orange,
+        onTap: () {
+          Get.toNamed(InviteFriends.routeName);
+        },
+      ),
+      ShortCutCard(
+        text: '官方公告',
+        icon: Icons.assignment,
+        color: Colors.grey,
+        onTap: () {
+          Get.toNamed(BulletinList.routeName);
+        },
+      ),
+      ShortCutCard(
+        text: '流转中心',
+        icon: Icons.explore,
+        color: Colors.blue,
+        onTap: () {
+          Get.toNamed(Market.routeName);
+        },
+      ),
+    ];
+    if (kIsWeb) {
+      children.add(ShortCutCard(
+        text: '下载APP',
+        icon: Icons.smart_toy,
+        color: Colors.green,
+        onTap: () async {
+          bool isiOS = await isiOSBrower();
+          if (isiOS) {
+            Toast.show('iOS应用还在上架审核中，请您耐性等待');
+            return;
+          }
+          Get.toNamed(AppDownload.routeName);
+        },
+      ));
+    }
+    return GridView.count(
+      crossAxisCount: 3,
+      crossAxisSpacing: 12,
+      mainAxisSpacing: 12,
+      childAspectRatio: 2,
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
+      children: children,
+    );
+  }
+
+  Widget buildMoreButton() {
+    if (artList.isEmpty) return Container();
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              elevation: 0,
+              backgroundColor: Colors.grey.shade200,
+              tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+              minimumSize: const Size(0, 30),
+            ),
+            onPressed: () {
+              widget.changeTab(1);
+            },
+            child: Row(
+              children: const [
+                Text(
+                  '查看更多',
+                  style: TextStyle(fontSize: 13, fontWeight: FontWeight.w300),
+                ),
+                SizedBox(
+                  width: 2,
+                ),
+                Icon(
+                  Icons.arrow_forward_ios_rounded,
+                  size: 13,
+                )
+              ],
+            ))
+      ],
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     super.build(context);
-    double screenWidth = MediaQuery.of(context).size.width;
+    double screenWidth = getDimensions().width;
     double itemWidth = (screenWidth - padding * 3) / 2;
     double mainItemWidth = screenWidth - padding * 2;
     return EasyRefresh(
@@ -83,10 +174,13 @@ class _HomeState extends State<Home> with AutomaticKeepAliveClientMixin {
         onLoad: () async {
           getList();
         },
+        refreshOnStart: true,
         child: CustomScrollView(slivers: [
           SliverAppBar(
             pinned: true,
             scrolledUnderElevation: 0,
+            automaticallyImplyLeading: false,
+            leadingWidth: 0,
             title: Stack(
               alignment: Alignment.center,
               children: [
@@ -111,46 +205,24 @@ class _HomeState extends State<Home> with AutomaticKeepAliveClientMixin {
             ),
             centerTitle: false,
             backgroundColor: Colors.white,
-            expandedHeight: 260,
-            // actions: [
-            //   ElevatedButton(
-            //       onPressed: () {
-            //         Get.toNamed(SearchScreen.routeName);
-            //       },
-            //       style: ElevatedButton.styleFrom(
-            //           minimumSize: const Size(30, 30),
-            //           elevation: 0,
-            //           backgroundColor: const Color.fromRGBO(240, 242, 240, 1),
-            //           shape: const CircleBorder(),
-            //           padding: const EdgeInsets.all(0),
-            //           tapTargetSize: MaterialTapTargetSize.shrinkWrap),
-            //       child: const Icon(
-            //         Icons.search,
-            //         size: 22,
-            //       )),
-            //   const SizedBox(
-            //     width: 12,
-            //   ),
-            // ],
+            expandedHeight: 240,
             stretch: true,
             flexibleSpace: FlexibleSpaceBar(
               background: ClipRRect(
-                // borderRadius: const BorderRadius.only(
-                //   bottomLeft: Radius.circular(20),
-                //   bottomRight: Radius.circular(20),
-                // ),
                 child: DecoratedBox(
                   decoration: const BoxDecoration(
-                    gradient: LinearGradient(
-                        begin: Alignment.bottomRight,
-                        end: Alignment.topLeft,
-                        colors: gradientButtonPrimarycolors,
-                        stops: [0, 0.49, 1]),
+                    color: Color.fromRGBO(41, 25, 52, 1),
                   ),
-                  child: Lottie.asset(
-                    'lib/assets/lottie/96849-astronaut-in-space.zip',
-                    fit: BoxFit.fitWidth,
-                  ),
+                  child: kIsWeb
+                      ? Image.asset(
+                          'assets/images/astronaut-in-space.jpg',
+                          fit: BoxFit.cover,
+                        )
+                      : Lottie.asset(
+                          'assets/lottie/astronaut-in-space.zip',
+                          fit: BoxFit.cover,
+                        ),
+                  // child: Container(),
                 ),
               ),
               stretchModes: const [
@@ -167,52 +239,11 @@ class _HomeState extends State<Home> with AutomaticKeepAliveClientMixin {
             sliver: SliverList(
                 delegate: SliverChildListDelegate([
               Container(
-                  margin: const EdgeInsets.only(top: 8, bottom: 20),
+                  margin: const EdgeInsets.only(top: 0, bottom: 16),
                   child: MediaQuery.removePadding(
                       context: context,
                       removeTop: true,
-                      child: GridView.count(
-                        crossAxisCount: 2,
-                        crossAxisSpacing: 12,
-                        mainAxisSpacing: 12,
-                        childAspectRatio: 2.5,
-                        shrinkWrap: true,
-                        physics: const NeverScrollableScrollPhysics(),
-                        children: [
-                          ShortCutCard(
-                            text: '流转中心',
-                            icon: Icons.explore,
-                            color: Colors.blue,
-                            onTap: () {
-                              widget.changeTab(1);
-                            },
-                          ),
-                          // ShortCutCard(
-                          //   text: '积分商城',
-                          //   icon: Icons.local_mall,
-                          //   color: Colors.orange,
-                          //   onTap: () {
-                          //     Get.toNamed(FuleStore.routeName);
-                          //   },
-                          // ),
-                          // ShortCutCard(
-                          //   text: '合成中心',
-                          //   icon: Icons.smart_toy,
-                          //   color: Colors.green,
-                          //   onTap: () {
-                          //     Get.toNamed(ComposeList.routeName);
-                          //   },
-                          // ),
-                          ShortCutCard(
-                            text: '官方公告',
-                            icon: Icons.assignment,
-                            color: Colors.orange,
-                            onTap: () {
-                              Get.toNamed(BulletinList.routeName);
-                            },
-                          ),
-                        ],
-                      ))),
+                      child: buildQuickNav())),
               artList.isNotEmpty
                   ? Column(
                       children: [
@@ -237,37 +268,7 @@ class _HomeState extends State<Home> with AutomaticKeepAliveClientMixin {
                     )
                     .toList(),
               ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        elevation: 0,
-                        backgroundColor: Colors.grey.shade200,
-                        tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                        minimumSize: const Size(0, 30),
-                      ),
-                      onPressed: () {
-                        widget.changeTab(1);
-                      },
-                      child: Row(
-                        children: const [
-                          Text(
-                            '查看更多',
-                            style: TextStyle(
-                                fontSize: 13, fontWeight: FontWeight.w300),
-                          ),
-                          SizedBox(
-                            width: 2,
-                          ),
-                          Icon(
-                            Icons.arrow_forward_ios_rounded,
-                            size: 13,
-                          )
-                        ],
-                      ))
-                ],
-              ),
+              buildMoreButton(),
               const SizedBox(
                 height: 12,
               )
@@ -373,15 +374,15 @@ class Badge extends StatelessWidget {
       text = '热卖中';
     } else if (artData.operatorStatus == GoodOperatorStatus.SOLD_OUT) {
       text = '已售罄';
-    } else if (artData.operatorStatus == GoodOperatorStatus.AHEAD) {
-      text = formartTimestamp(artData.shelfTime!);
+    } else if (artData.operatorStatus == GoodOperatorStatus.WAIT) {
+      text = '${formartTimestamp(artData.shelfTime!)} 开售';
     }
 
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 3),
       decoration: BoxDecoration(
           color: const Color.fromRGBO(0, 0, 0, .7),
-          borderRadius: BorderRadius.circular(6),
+          borderRadius: BorderRadius.circular(4),
           boxShadow: const [
             BoxShadow(
               offset: Offset(0, 10),
@@ -431,10 +432,12 @@ class ShortCutCard extends StatelessWidget {
     return Container(
       clipBehavior: Clip.hardEdge,
       decoration: BoxDecoration(
-          color: const Color.fromRGBO(240, 242, 240, 1),
-          borderRadius: BorderRadius.circular(12)),
+        color: const Color.fromRGBO(240, 242, 240, 1),
+        borderRadius: BorderRadius.circular(6),
+      ),
       child: InkWell(
         onTap: onTap,
+        borderRadius: BorderRadius.circular(6),
         child: Stack(
           children: [
             Padding(
@@ -450,7 +453,7 @@ class ShortCutCard extends StatelessWidget {
               right: -10,
               child: Icon(
                 icon,
-                size: 50,
+                size: 40,
                 color: color,
               ),
             )

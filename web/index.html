@@ -1,58 +1,156 @@
 <!DOCTYPE html>
 <html>
-<head>
-  <!--
-    If you are serving your web app in a path other than the root, change the
-    href value below to reflect the base path you are serving from.
+  <head>
+    <base href="$FLUTTER_BASE_HREF" />
 
-    The path provided below has to start and end with a slash "/" in order for
-    it to work correctly.
+    <meta charset="UTF-8" />
+    <meta content="IE=Edge" http-equiv="X-UA-Compatible" />
+    <meta name="description" content="H2VERSE, a unique web3 world" />
+    <meta flt-viewport name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <!-- iOS meta tags & icons -->
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+    <meta name="apple-mobile-web-app-title" content="h2verse" />
+    <link rel="dns-prefetch" href="https://h2verse-1313597710.cos.ap-shanghai.myqcloud.com">
+    <link rel="apple-touch-icon" href="icons/Icon-192.png" />
 
-    For more details:
-    * https://developer.mozilla.org/en-US/docs/Web/HTML/Element/base
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="favicon.png" />
 
-    This is a placeholder for base href that will be replaced by the value of
-    the `--base-href` argument provided to `flutter build`.
-  -->
-  <base href="$FLUTTER_BASE_HREF">
+    <title>h2verse</title>
+    <link rel="manifest" href="manifest.json" />
 
-  <meta charset="UTF-8">
-  <meta content="IE=Edge" http-equiv="X-UA-Compatible">
-  <meta name="description" content="A new Flutter project.">
-
-  <!-- iOS meta tags & icons -->
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black">
-  <meta name="apple-mobile-web-app-title" content="h2verse">
-  <link rel="apple-touch-icon" href="icons/Icon-192.png">
-
-  <!-- Favicon -->
-  <link rel="icon" type="image/png" href="favicon.png"/>
-
-  <title>h2verse</title>
-  <link rel="manifest" href="manifest.json">
-
-  <script>
-    // The value below is injected by flutter build, do not touch.
-    var serviceWorkerVersion = null;
-  </script>
-  <!-- This script adds the flutter initialization JS code -->
-  <script src="flutter.js" defer></script>
-</head>
-<body>
-  <script>
-    window.addEventListener('load', function(ev) {
-      // Download main.dart.js
-      _flutter.loader.loadEntrypoint({
-        serviceWorker: {
-          serviceWorkerVersion: serviceWorkerVersion,
+    <script>
+      // The value below is injected by flutter build, do not touch.
+      var serviceWorkerVersion = null;
+    </script>
+    <script type="text/javascript" charset="utf8" async src="//cstatic.dun.163yun.com/load.min.js"></script>
+    <!-- This script adds the flutter initialization JS code -->
+    <script src="flutter.js" defer></script>
+  </head>
+  <body>
+    <div id="loading">
+      <style>
+        #loading {
+          inset: 0;
+          overflow: hidden;
+          margin: 0;
+          padding: 0;
+          position: fixed;
+          left: 0;
+          top: 0;
+          right: 0;
+          bottom: 0;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          z-index: 100;
+          background-color: #fff;
         }
-      }).then(function(engineInitializer) {
-        return engineInitializer.initializeEngine();
-      }).then(function(appRunner) {
-        return appRunner.runApp();
+        #loading img {
+          width: 200px;
+          height: 200px;
+          animation: 1s ease-in-out 0s infinite alternate breathe;
+          opacity: 0.66;
+          transition: opacity 0.4s;
+        }
+        #loading.main_done img {
+          opacity: 1;
+        }
+        #loading.init_done img {
+          opacity: 0.05;
+        }
+        @keyframes breathe {
+          from {
+            transform: scale(1);
+          }
+          to {
+            transform: scale(0.95);
+          }
+        }
+      </style>
+      <img src="./static/splash_logo.png" alt="loading...">
+    </div>
+    <div id="captcha"></div>
+    <script src="./static/yidun-captcha.js"></script>
+    <script>
+      window.addEventListener("load", function (ev) {
+        const loading = document.querySelector("#loading");
+        if (window.jsManifest) {
+          _flutter.loader._loadEntrypoint = function (entryUrl) {
+            function _downloadSplitJs(url) {
+              return new Promise((resolve, reject) => {
+                const xhr = new XMLHttpRequest();
+                xhr.open("get", url, true);
+                xhr.onreadystatechange = () => {
+                  if (xhr.readyState == 4) {
+                    if (
+                      (xhr.status >= 200 && xhr.status < 300) ||
+                      xhr.status == 304
+                    ) {
+                      resolve(xhr.responseText);
+                    }
+                  }
+                };
+                xhr.onerror = reject;
+                xhr.ontimeout = reject;
+                xhr.send();
+              });
+            }
+  
+            _retryCount = 0;
+  
+            const promises = window.jsManifest.map(_downloadSplitJs);
+            this._scriptLoaded = new Promise((resolve, reject) => {
+              Promise.all(promises)
+                .then((values) => {
+                  const contents = values.join("");
+                  const script = document.createElement("script");
+                  script.text = contents;
+                  script.type = "text/javascript";
+  
+                  this._didCreateEngineInitializerResolve = resolve;
+                  script.addEventListener("error", reject);
+                  document.body.appendChild(script);
+                })
+                .catch(() => {
+                  // console.error("main.dart.js download fail，refresh and try again");
+  
+                  // retry again
+                  if (++this._retryCount > 3) {
+                    const element = document.createElement("a");
+                    element.href = "javascript:location.reload()";
+                    element.style.textAlign = "center";
+                    element.style.margin = "50px auto";
+                    element.style.display = "block";
+                    element.style.color = "#f89800";
+                    element.innerText = "加载失败，点击重新请求页面";
+                    document.body.appendChild(a);
+                  }
+                });
+            });
+            return this._scriptLoaded;
+          };
+        }
+
+        // Download main.dart.js
+        _flutter.loader
+          ._loadEntrypoint('main.dart.js')
+          .then(function (engineInitializer) {
+            loading.classList.add("main_done");
+            return engineInitializer.initializeEngine();
+          })
+          .then(function (appRunner) {
+            return appRunner.runApp();
+          })
+          .then(function (app) {
+            // Wait a few milliseconds so users can see the "zoooom" animation
+            // before getting rid of the "loading" div.
+            window.setTimeout(function () {
+              loading.remove();
+            }, 1500);
+          });
       });
-    });
-  </script>
-</body>
+    </script>
+  </body>
 </html>

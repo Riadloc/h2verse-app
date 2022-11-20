@@ -4,7 +4,7 @@ import 'package:get/get.dart';
 import 'package:h2verse_app/models/bulletin_model.dart';
 import 'package:h2verse_app/services/common_service.dart';
 import 'package:h2verse_app/utils/helper.dart';
-import 'package:h2verse_app/views/my_webview.dart';
+import 'package:h2verse_app/views/webview/my_webview.dart';
 
 class BulletinList extends StatefulWidget {
   const BulletinList({super.key});
@@ -81,7 +81,7 @@ class _BulletinListState extends State<BulletinList> {
                 child: InkWell(
                   onTap: () {
                     Get.toNamed(MyWebview.routeName,
-                        arguments: {'title': item.title, 'url': item.slug});
+                        arguments: {'title': item.name, 'url': item.url});
                   },
                   child: Padding(
                     padding: const EdgeInsets.symmetric(
@@ -91,7 +91,7 @@ class _BulletinListState extends State<BulletinList> {
                       children: [
                         Flexible(
                           child: Text(
-                            item.title,
+                            item.name,
                             style: const TextStyle(fontWeight: FontWeight.w500),
                           ),
                         ),
@@ -99,7 +99,7 @@ class _BulletinListState extends State<BulletinList> {
                           // width: 120,
                           margin: const EdgeInsets.only(left: 12),
                           child: Text(
-                            formartDate(item.publishedAt, timeZone: false),
+                            formartDate(item.createdAt),
                             style: TextStyle(
                                 color: Colors.grey.shade500, fontSize: 13),
                           ),

@@ -48,6 +48,6 @@ class Alert {
     String title,
   ) {
     showAlert(title,
-        message: '请求失败', backgroundColor: const Color.fromRGBO(227, 77, 89, 1));
+        message: '请求错误', backgroundColor: const Color.fromRGBO(227, 77, 89, 1));
   }
 }

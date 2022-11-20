@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:h2verse_app/utils/helper.dart';
 
 class UpgradeModal extends StatelessWidget {
   const UpgradeModal(
@@ -56,7 +57,7 @@ class UpgradeModal extends StatelessWidget {
   Widget build(BuildContext context) {
     return Center(
         child: Container(
-      width: MediaQuery.of(context).size.width * 0.8,
+      width: getDimensions().width * 0.8,
       // height: 180,
       padding: const EdgeInsets.only(top: 16),
       decoration: BoxDecoration(
