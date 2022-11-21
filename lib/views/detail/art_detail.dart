@@ -63,7 +63,12 @@ class _ArtDetailState extends State<ArtDetail> {
     switch (_status) {
       case GoodOperatorStatus.WAIT:
         {
-          int time = data.nodes!.firstWhere((element) => element.id == 2).time;
+          int time;
+          if (data.shelfTime != null) {
+            time = data.shelfTime!;
+          } else {
+            time = data.nodes!.firstWhere((element) => element.id == 2).time;
+          }
           duration = DateTime.fromMillisecondsSinceEpoch(time)
               .difference(DateTime.now())
               .inSeconds;

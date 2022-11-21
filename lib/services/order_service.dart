@@ -6,6 +6,7 @@ import 'package:get/get.dart' as Getx;
 import 'package:h2verse_app/constants/enum.dart';
 import 'package:h2verse_app/models/order_config_model.dart';
 import 'package:h2verse_app/models/order_model.dart';
+import 'package:h2verse_app/models/order_relation.dart';
 import 'package:h2verse_app/models/order_result_model.dart';
 import 'package:h2verse_app/utils/alert.dart';
 import 'package:h2verse_app/utils/http.dart';
@@ -123,6 +124,20 @@ class OrderService {
     }
     Alert.reqFail(response.data['msg']);
     return Order.empty();
+  }
+
+  static Future<OrderRelation?> getDetailRelatedGoods(
+      {required String orderNo}) async {
+    var query = {'orderNo': orderNo};
+    EasyLoading.show(status: '获取订单信息...');
+    Response response =
+        await HttpUtils().dio.get('/order/goods', queryParameters: query);
+    EasyLoading.dismiss();
+    if (response.data['code'] == 0) {
+      return OrderRelation.fromMap(response.data['data']);
+    }
+    // Alert.reqFail(response.data['msg']);
+    return null;
   }
 
   static Future<OrderConfig?> getConfig({required String goodId}) async {

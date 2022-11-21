@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:h2verse_app/constants/constants.dart';
 import 'package:h2verse_app/providers/user_provider.dart';
 import 'package:h2verse_app/views/home.dart';
@@ -50,6 +51,12 @@ class _HomeWrapperState extends State<HomeWrapper> {
   void initState() {
     super.initState();
     setInviteCode();
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      var params = Get.arguments;
+      if (params?['tab'] != null) {
+        _onItemTapped(params['tab'][0]);
+      }
+    });
   }
 
   @override

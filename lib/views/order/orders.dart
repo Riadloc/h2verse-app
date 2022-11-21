@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:h2verse_app/constants/constants.dart';
 import 'package:h2verse_app/constants/theme.dart';
+import 'package:h2verse_app/models/order_relation.dart';
+import 'package:h2verse_app/services/order_service.dart';
 import 'package:h2verse_app/views/home_wrapper.dart';
 import 'package:h2verse_app/views/order/my_order_list.dart';
+import 'package:h2verse_app/widgets/modal.dart';
 
 class Orders extends StatefulWidget {
   const Orders({Key? key}) : super(key: key);
@@ -19,6 +23,42 @@ class _OrdersState extends State<Orders> {
     Tab(text: '已购买'),
     Tab(text: '已取消'),
   ];
+
+  void getMyPurchased(String orderNo) async {
+    OrderRelation? value =
+        await OrderService.getDetailRelatedGoods(orderNo: orderNo);
+    if (value != null) {
+      if (value.status == PayOrderStatus.SUCCESSED) {
+        Get.dialog(Modal(
+          title: '购买成功',
+          description: '立即前往查看？',
+          confirmText: '查看',
+          cancelText: '留在当前页',
+          onConfirm: () {
+            // 跳转到我的藏品页
+            Get.offAllNamed(HomeWrapper.routeName, arguments: {
+              "tab": [2, value.type == 2 ? 1 : 0]
+            });
+          },
+          onCancel: () {
+            Get.back();
+          },
+        ));
+      }
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      Uri uri = Uri.base;
+      var query = uri.queryParameters;
+      if (query['out_trade_no'] != null) {
+        getMyPurchased(query['out_trade_no']!);
+      }
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
