@@ -1,12 +1,10 @@
 name: Build Flutter App
 
 on:
-  push:
-    tags: 'v*'
   workflow_dispatch:
     inputs:
       version:
-        description: 'Environment to run tests against'
+        description: 'App Version'
         type: string
         required: false
 
@@ -16,10 +14,6 @@ jobs:
     steps:
       - name: Checkout the code
         uses: actions/checkout@v3
-      - name: env set
-        run: |
-          echo "RELEASE_VERSION=${{GITHUB_REF:10}}" >> $GITHUB_ENV
-          echo "${{ env.RELEASE_VERSION }}"
       - name: setup java
         uses: actions/setup-java@v2
         with:
@@ -41,7 +35,7 @@ jobs:
           file: 'build/app/outputs/flutter-apk/app/*.apk'
           tags: true
           draft: false
-          tag_name: ${{ env.RELEASE_VERSION }}
+          tag_name: ${{ inputs.version }}
       - name: node set
         uses: actions/setup-node@v3
         with:
