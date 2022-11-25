@@ -1,0 +1,48 @@
+name: Build Flutter App
+
+on:
+  push:
+    tags: 'v*'
+
+jobs:
+  flutter-build-relase:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout the code
+        uses: actions/checkout@v3
+      - name: env set
+        run: echo ::set-env name=RELEASE_VERSION::${GITHUB_REF:10}
+      - name: setup java
+        uses: actions/setup-java@v2
+        with:
+          distribution: 'zulu'
+          java-version: '17'
+      - name: Install Flutter Environment
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.3.8'
+          channel: 'stable'
+      - run: flutter --version
+      - name: build apk
+        run: flutter build apk --split-per-abi
+      - name: upload release
+        uses: xresloader/upload-to-github-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          file: 'build/app/outputs/flutter-apk/app/*.apk'
+          tags: true
+          draft: false
+          tag_name: ${{ env.RELEASE_VERSION }}
+      - name: node set
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+      - name: build web
+        run: |
+          flutter build web --web-renderer html --release
+          node bin/optiweb.js
+          cp -rf build/app/intermediates/assets/release/mergeReleaseAssets/flutter_assets/fonts build/web/assets
+          cd build/web
+          ls
+        
