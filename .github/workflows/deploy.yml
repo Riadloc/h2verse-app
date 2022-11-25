@@ -7,7 +7,7 @@ on:
     inputs:
       version:
         description: 'Environment to run tests against'
-        type: environment
+        type: string
         required: false
 
 jobs:
