@@ -63,7 +63,7 @@ dependencies:
   js: ^0.6.4
   flutter_easyloading: ^3.0.5
   flutter_svg: ^1.1.4
-  flutter_native_splash: ^2.2.9
+  flutter_native_splash: ^2.2.15
   timer_count_down: ^2.2.1
   pinput: ^2.2.12
   package_info_plus: ^3.0.1
@@ -145,4 +145,4 @@ flutter_native_splash:
     image_dark: assets/images/splash_logo.png
     icon_background_color_dark: "#121212"
 
-  web: false
+  web: true
