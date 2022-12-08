@@ -45,6 +45,15 @@ jobs:
           flutter build web --web-renderer html --release
           node bin/optiweb.js
           cp -rf build/app/intermediates/assets/release/mergeReleaseAssets/flutter_assets/fonts build/web/assets
-          cd build/web
-          ls
-        
+          ls build/web
+      - name: copy file via ssh key
+        uses: appleboy/scp-action@master
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USERNAME }}
+          port: 22
+          key: ${{ secrets.KEY }}
+          source: "build/web/*"
+          target: "root/web/test/"
+          rm: true
+      - run: echo 'success deployed'
