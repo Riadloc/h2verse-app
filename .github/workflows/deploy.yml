@@ -54,6 +54,6 @@ jobs:
           port: 22
           key: ${{ secrets.KEY }}
           source: "build/web/*"
-          target: "root/web/test/"
+          target: "web/app/"
           rm: true
       - run: echo 'success deployed'
