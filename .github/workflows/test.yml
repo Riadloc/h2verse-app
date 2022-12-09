@@ -7,7 +7,7 @@ jobs:
   flutter-build-relase:
     runs-on: ubuntu-latest
     steps:
-      - run: echo 'hello world' > hello.md
+      - run: echo 'hello world' > hello.txt
       - name: copy file via ssh key
         uses: appleboy/scp-action@master
         with:
@@ -15,7 +15,7 @@ jobs:
           username: ${{ secrets.USERNAME }}
           port: 22
           key: ${{ secrets.KEY }}
-          source: "build/web/*"
+          source: "hello.txt"
           target: "root/web/test/"
           rm: true
       - run: echo 'success deployed'
