@@ -185,7 +185,11 @@ class _ComposeListState extends State<ComposeList> {
                     },
                   )
                 : ListView(
-                    children: const [EmptyPlaceholder()],
+                    children: const [
+                      EmptyPlaceholder(
+                        title: '暂无合成活动',
+                      )
+                    ],
                   )));
   }
 }

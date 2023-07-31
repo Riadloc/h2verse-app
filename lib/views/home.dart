@@ -6,6 +6,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:h2verse_app/constants/theme.dart';
 import 'package:h2verse_app/utils/helper.dart';
 import 'package:h2verse_app/utils/toast.dart';
+import 'package:h2verse_app/views/compose/compose_list.dart';
 import 'package:h2verse_app/views/invite_friends.dart';
 import 'package:h2verse_app/views/market.dart';
 import 'package:h2verse_app/views/other/app_download.dart';
@@ -92,6 +93,14 @@ class _HomeState extends State<Home> with AutomaticKeepAliveClientMixin {
         color: Colors.blue,
         onTap: () {
           Get.toNamed(Market.routeName);
+        },
+      ),
+      ShortCutCard(
+        text: '合成活动',
+        icon: Icons.science,
+        color: Colors.green,
+        onTap: () {
+          Get.toNamed(ComposeList.routeName);
         },
       ),
     ];

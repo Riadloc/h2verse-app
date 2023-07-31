@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:h2verse_app/constants/constants.dart';
+import 'package:h2verse_app/constants/enum.dart';
 import 'package:h2verse_app/constants/theme.dart';
 import 'package:h2verse_app/models/compose_model.dart';
 import 'package:h2verse_app/services/art_service.dart';
 import 'package:h2verse_app/utils/toast.dart';
 import 'package:h2verse_app/views/compose/compose_sheet.dart';
+import 'package:h2verse_app/views/detail/art_detail.dart';
 import 'package:h2verse_app/widgets/cached_image.dart';
 import 'package:h2verse_app/widgets/common_field_card.dart';
 import 'package:h2verse_app/widgets/loading_button.dart';
@@ -42,34 +44,41 @@ class _ComposeLabState extends State<ComposeLab> {
         return;
       }
     }
-    setState(() {
-      loading = true;
-    });
-    bool res = await ArtService.onCompose(
-        id: data.id,
-        materials: coutMap.values.expand((element) => element).toList());
-    if (res) {
-      Toast.show('恭喜您，合成成功！');
-      Get.dialog(
-        Modal(
-          title: '恭喜您，合成成功！',
-          confirmText: '继续合成',
-          cancelText: '返回',
-          onConfirm: () {
-            setState(() {
-              coutMap = {};
-            });
-            Get.back();
-          },
-          onCancel: () {
-            Get.back(closeOverlays: true);
-          },
-        ),
-      );
-    }
-    setState(() {
-      loading = false;
-    });
+    Get.dialog(Modal(
+        title: '提示',
+        description: '合成材料将会在合成后自动销毁，确认合成？',
+        onConfirm: () async {
+          setState(() {
+            loading = true;
+          });
+          var res = await ArtService.onCompose(
+              id: data.id,
+              materials: coutMap.values.expand((element) => element).toList());
+          if (res != null) {
+            Get.dialog(
+              Modal(
+                title: '恭喜您，藏品合成成功！',
+                confirmText: '查看',
+                cancelText: '继续合成',
+                onConfirm: () {
+                  Get.offNamed(ArtDetail.routeName, arguments: {
+                    'goodId': res['id'],
+                    'artType': ArtType.second,
+                  });
+                },
+                onCancel: () {
+                  setState(() {
+                    coutMap = {};
+                  });
+                  Get.back();
+                },
+              ),
+            );
+          }
+          setState(() {
+            loading = false;
+          });
+        }));
   }
 
   @override
@@ -208,7 +217,7 @@ class _ComposeLabState extends State<ComposeLab> {
                         SizedBox(
                           height: 8,
                         ),
-                        Text('材料将会在合成后自动销毁')
+                        Text('合成材料将会在合成后自动销毁')
                       ])),
                   const SizedBox(
                     height: 60,

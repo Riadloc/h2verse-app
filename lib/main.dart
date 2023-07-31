@@ -3,9 +3,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
-import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
-import 'package:h2verse_app/models/order_model.dart';
 import 'package:h2verse_app/views/detail/art_power_consume.dart';
 import 'package:h2verse_app/views/openauth.dart';
 import 'package:h2verse_app/views/order/orders.dart';
@@ -211,8 +209,8 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
         Widget child = EasyLoading.init()(context, widget);
         if (_checkSize) {
           final size = Get.size;
-          final _hasFrame = size.width > _mobileWidthThreshold;
-          if (_hasFrame) {
+          final hasFrame = size.width > _mobileWidthThreshold;
+          if (hasFrame) {
             return _buildFrame(child);
           }
         }

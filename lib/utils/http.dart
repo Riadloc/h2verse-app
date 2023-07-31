@@ -20,7 +20,7 @@ class HttpUtils {
     BaseOptions options = BaseOptions(
       // baseUrl: 'http://192.168.31.210:3000/api',
       // baseUrl: 'http://192.168.2.230:3000/api',
-      baseUrl: kReleaseMode ? '$baseUrl/api' : 'http://192.168.31.210:3000/api',
+      baseUrl: kReleaseMode ? '$baseUrl/api' : 'http://192.168.2.230:3000/api',
       validateStatus: (status) => status! >= 200 && status < 500,
     );
     dio = Dio(options);

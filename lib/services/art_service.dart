@@ -212,10 +212,10 @@ class ArtService {
     Response response =
         await HttpUtils().dio.post('/goods/compose', data: data);
     if (response.data['code'] == 0) {
-      return true;
+      return response.data['data'];
     }
     Alert.reqFail(response.data['msg']);
-    return false;
+    return null;
   }
 
   static Future<BoxResult?> postOpenboxOne({required String id}) async {

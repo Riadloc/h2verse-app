@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:shimmer/shimmer.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 
 class MarketSkeleton extends StatelessWidget {
   const MarketSkeleton({Key? key, this.padding = 0}) : super(key: key);
@@ -9,9 +9,10 @@ class MarketSkeleton extends StatelessWidget {
   Widget build(BuildContext context) {
     return Padding(
         padding: EdgeInsets.all(padding),
-        child: Shimmer.fromColors(
-            baseColor: Colors.black38,
-            highlightColor: Colors.white,
+        child: Animate(
+            effects: const [
+              ShimmerEffect(duration: Duration(milliseconds: 500))
+            ],
             child: GridView.builder(
               gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
                 mainAxisSpacing: padding,
@@ -30,7 +31,7 @@ class MarketSkeleton extends StatelessWidget {
                         AspectRatio(
                             aspectRatio: 1,
                             child: Container(
-                              color: Colors.black45,
+                              color: Colors.black12,
                             )),
                         Container(
                           width: double.infinity,
@@ -41,7 +42,7 @@ class MarketSkeleton extends StatelessWidget {
                                 Container(
                                   width: 100,
                                   height: 20,
-                                  color: Colors.black38,
+                                  color: Colors.black12,
                                 ),
                                 const SizedBox(
                                   height: 6,
@@ -49,7 +50,7 @@ class MarketSkeleton extends StatelessWidget {
                                 Container(
                                   width: 50,
                                   height: 20,
-                                  color: Colors.black38,
+                                  color: Colors.black12,
                                 )
                               ]),
                         )

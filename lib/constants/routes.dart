@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:h2verse_app/views/about.dart';
 import 'package:h2verse_app/views/acount/trade_password_form.dart';
 import 'package:h2verse_app/views/airdrop/airdrop_detail.dart';
@@ -98,3 +99,12 @@ Map<String, Widget Function(BuildContext)> routes = {
   Activity.routeName: (context) => const Activity(),
   BoxOpenRecords.routeName: (context) => const BoxOpenRecords(),
 };
+
+final routes2 = GoRouter(
+  routes: [
+    GoRoute(
+      path: '/',
+      builder: (context, state) => const HomeWrapper(),
+    ),
+  ],
+);

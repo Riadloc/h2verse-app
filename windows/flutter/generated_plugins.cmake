@@ -4,6 +4,7 @@
 
 list(APPEND FLUTTER_PLUGIN_LIST
   permission_handler_windows
+  rive_common
   sentry_flutter
   share_plus
   smart_auth

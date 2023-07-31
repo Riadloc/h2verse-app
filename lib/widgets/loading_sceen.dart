@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:shimmer/shimmer.dart';
 
 class LoadingScreen extends StatefulWidget {
   const LoadingScreen({Key? key}) : super(key: key);
@@ -28,13 +28,13 @@ class _LoadingScreenState extends State<LoadingScreen> {
         toolbarHeight: 0,
       ),
       body: Center(
-        child: Shimmer.fromColors(
-          baseColor: Colors.black38,
-          highlightColor: Colors.white,
+        child: Animate(
+          effects: const [ShimmerEffect(duration: Duration(milliseconds: 500))],
           child: Text(
             'H2VERSE',
             style: GoogleFonts.limelight(
               fontSize: 50.0,
+              color: Colors.black38,
               fontWeight: FontWeight.w300,
             ),
           ),
